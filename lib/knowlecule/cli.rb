@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: false
 
+$:.unshift File.expand_path(File.join(__dir__, "..", "lib"))
+
 require "drydock"
 require "highline/import"
 
@@ -12,7 +14,6 @@ module Knowlecule
     debug :on
 
     # before do
-    #   @hostname = `cat /etc/hostname`.strip
     # end
 
     about "about"
@@ -31,20 +32,15 @@ module Knowlecule
 
       sources = obj.argv.map {|source| Pathname.new(source)}
 
-      
       sources.each do |path|
         unless path.realdirpath.exist?
           puts "#{path} not valid...exiting"; exit
         end
-        directory_loader = Aoororachain::Loaders::DirectoryLoader.new(path: "#{path.cleanpath.to_s}", glob: "**/*.pdf", loader: Aoororachain::Loaders::FileLoader)
-        files = directory_loader.load
-        p files.size
       end
 
-      Knowlecule::Import.new(sources)
+      files = Knowlecule::Loader.new(sources)
+      files.import
     end
 
   end # end cli class
 end # end soundbot module
-
-puts "hey"

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.join(File.dirname(__FILE__), '..', 'lib') # Put our local lib in first place
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 TMPFS = File.join("/tmp/knowlecule")
 
@@ -8,8 +8,8 @@ Dotenv.load(File.join(__dir__, '..', '.env'))
 
 require "aoororachain"
 
-require "knowlecule/utils/glob"
 require "knowlecule/utils/arraylib"
+require "knowlecule/utils/glob"
 require "knowlecule/utils/linked-list"
 require "knowlecule/utils/logging"
 

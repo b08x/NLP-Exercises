@@ -2,11 +2,11 @@
 
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
+require "dotenv"
 require "drydock"
 require "highline/import"
 
 require "knowlecule"
-
 
 if ARGV.any?
   Drydock.run!(ARGV, $stdin) if Drydock.run? && !Drydock.has_run?

@@ -16,10 +16,10 @@ Gem::Specification.new do |spec|
     "changelog_uri" => "https://github.com/b08x/knowlecule/releases",
     "source_code_uri" => "https://github.com/b08x/knowlecule",
     "homepage_uri" => spec.homepage,
-    "rubygems_mfa_required" => "true"
+    "rubyspec.add_dependencys_mfa_required" => "true"
   }
 
-  # Specify which files should be added to the gem when it is released.
+  # Specify which files should be added to the spec.add_dependency when it is released.
   spec.files = Dir.glob(%w[LICENSE.txt README.md {exe,lib}/**/*]).reject { |f| File.directory?(f) }
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
@@ -35,8 +35,84 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "solargraph"
 
   # Runtime dependencies
-  spec.add_dependency "aoororachain"
-  spec.add_dependency "drydock"
-  spec.add_dependency "highline"
-  spec.add_dependency "lingua"
+  spec.add_dependency 'aoororachain'
+  spec.add_dependency 'awesome_print'
+  spec.add_dependency 'bcrypt_pbkdf'
+  spec.add_dependency 'beckett'
+  spec.add_dependency 'chroma-db'
+  spec.add_dependency 'cli-ui'
+  spec.add_dependency 'cohere'
+  spec.add_dependency 'cohere-ruby'
+  spec.add_dependency 'composable_operations'
+  spec.add_dependency 'decisiontree'
+  spec.add_dependency 'docsplit'
+  spec.add_dependency 'dotenv'
+  spec.add_dependency 'drydock'
+  spec.add_dependency 'engtagger'
+  spec.add_dependency 'epitome'
+  spec.add_dependency 'find'
+  # spec.add_dependency 'google_palm_api'
+  spec.add_dependency 'graphr'
+  spec.add_dependency 'hashie'
+  spec.add_dependency 'hexapdf'
+  spec.add_dependency 'highline'
+  spec.add_dependency 'hugging-face'
+  spec.add_dependency 'jongleur'
+  spec.add_dependency 'json'
+  spec.add_dependency 'jsonl'
+  spec.add_dependency 'kramdown'
+  spec.add_dependency 'langchainrb'
+  spec.add_dependency 'lemmatizer'
+  spec.add_dependency 'lingua'
+  spec.add_dependency 'llm_memory'
+  spec.add_dependency 'logging'
+  spec.add_dependency 'mimemagic'
+  spec.add_dependency 'multi_json'
+  spec.add_dependency 'net-ssh'
+  spec.add_dependency 'networkx'
+  spec.add_dependency 'nokogiri'
+  spec.add_dependency 'ohm'
+  spec.add_dependency 'ohm-contrib'
+  spec.add_dependency 'oj'
+  spec.add_dependency 'ollama-ai'
+  spec.add_dependency 'open3'
+  spec.add_dependency 'open4'
+  spec.add_dependency 'open-uri'
+  spec.add_dependency 'openssl'
+  spec.add_dependency 'parallel'
+  spec.add_dependency 'pdf-reader'
+  spec.add_dependency 'pdf_paradise'
+  spec.add_dependency 'pg'
+  spec.add_dependency 'pgvector'
+  spec.add_dependency 'poppler'
+  spec.add_dependency 'pragmatic_segmenter'
+  spec.add_dependency 'pragmatic_tokenizer'
+  spec.add_dependency 'pycall'
+  spec.add_dependency 'redic'
+  spec.add_dependency 'redis'
+  spec.add_dependency 'rouge'
+  spec.add_dependency 'ruby-openai'
+  spec.add_dependency 'ruby-spacy'
+  spec.add_dependency 'rubydown'
+  spec.add_dependency 'sad_panda'
+  spec.add_dependency 'safe_ruby'
+  spec.add_dependency 'scalpel'
+  spec.add_dependency 'sequel'
+  spec.add_dependency 'socrates'
+  spec.add_dependency 'sqlite3'
+  spec.add_dependency 'standard'
+  spec.add_dependency 'stream_lines'
+  spec.add_dependency 'sync'
+  spec.add_dependency 'syntax_tree'
+  spec.add_dependency 'sys-proctable'
+  spec.add_dependency 'tomoto'
+  spec.add_dependency 'treetop'
+  spec.add_dependency 'tty-box'
+  spec.add_dependency 'tty-command'
+  spec.add_dependency 'wikipedia-client'
+  spec.add_dependency 'wordnet'
+  spec.add_dependency 'wordnet-defaultdb'
+  spec.add_dependency 'yajl'
+  spec.add_dependency 'yajl-ruby'
+  spec.add_dependency 'yaml'
 end

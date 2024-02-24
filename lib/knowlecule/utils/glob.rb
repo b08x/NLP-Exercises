@@ -35,11 +35,11 @@ module Glob
     return files.split("\n").sort
   end
 
-  def sounds(path)
+  def audio(path)
     return Dir.glob(File.join(path, "**/*{,/*/**}.{wav,flac,mp3,aiff,ogg,wma,opus,m4a}"))
   end
 
-  def videos(path)
+  def video(path)
     return Dir.glob(File.join(path, "**/*{,/*/**}.{mp4,mkv}"))
   end
 

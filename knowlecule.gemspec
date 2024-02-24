@@ -1,20 +1,20 @@
-require_relative "lib/example/version"
+require_relative "lib/knowlecule/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "example"
-  spec.version = Example::VERSION
-  spec.authors = ["Example Owner"]
-  spec.email = ["owner@example.com"]
+  spec.name = "knowlecule"
+  spec.version = Knowlecule::VERSION
+  spec.authors = ["Robert Pannick"]
+  spec.email = ["rwpannick@gmail.com"]
 
-  spec.summary = ""
-  spec.homepage = "https://github.com/mattbrictson/gem"
+  spec.summary = "Process text, build knowledge graphs for LLMs."
+  spec.homepage = "https://github.com/b08x/knowlecule"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0"
 
   spec.metadata = {
-    "bug_tracker_uri" => "https://github.com/mattbrictson/gem/issues",
-    "changelog_uri" => "https://github.com/mattbrictson/gem/releases",
-    "source_code_uri" => "https://github.com/mattbrictson/gem",
+    "bug_tracker_uri" => "https://github.com/b08x/knowlecule/issues",
+    "changelog_uri" => "https://github.com/b08x/knowlecule/releases",
+    "source_code_uri" => "https://github.com/b08x/knowlecule",
     "homepage_uri" => spec.homepage,
     "rubygems_mfa_required" => "true"
   }

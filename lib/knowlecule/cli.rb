@@ -1,14 +1,14 @@
 require "thor"
 
-module Example
+module Knowlecule
   class CLI < Thor
     extend ThorExt::Start
 
     map %w[-v --version] => "version"
 
-    desc "version", "Display example version", hide: true
+    desc "version", "Display knowlecule version", hide: true
     def version
-      say "example/#{VERSION} #{RUBY_DESCRIPTION}"
+      say "knowlecule/#{VERSION} #{RUBY_DESCRIPTION}"
     end
   end
 end

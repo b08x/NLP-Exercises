@@ -1,0 +1,84 @@
+version: '3.1'
+
+services:
+  flowise:
+    image: flowiseai/flowise
+    restart: always
+    environment:
+        - PUID=1000
+        - PGID=1000
+        - PORT=3002
+        - PASSPHRASE=${PASSPHRASE}
+        - FLOWISE_USERNAME=${FLOWISE_USERNAME}
+        - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
+        - DEBUG=${DEBUG}
+        - DATABASE_PATH=${DATABASE_PATH}
+        - APIKEY_PATH=${APIKEY_PATH}
+        - SECRETKEY_PATH=${SECRETKEY_PATH}
+        - LOG_LEVEL=${LOG_LEVEL}
+        - LOG_PATH=${LOG_PATH}
+        - EXECUTION_MODE=${EXECUTION_MODE}
+    ports:
+        - 3002:3002
+    volumes:
+        - ./data/flowise:/root/.flowise
+        - ./data/flowise/output:/data/output
+    command: /bin/sh -c "sleep 3; flowise start"
+    # networks:
+    #   network:
+    #     ipv4_address: 10.5.0.3
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - ./data/chroma:/chroma/chroma/
+    environment:
+      PUID: 1000
+      PGID: 1000
+      IS_PERSISTENT: TRUE
+    ports:
+      - 8000:8000
+    # networks:
+    #   network:
+    #     ipv4_address: 10.5.0.4
+  redis:
+    image: redis/redis-stack:latest
+    environment:
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ./data/redis/data:/data
+    ports:
+      - 6379:6379
+      - 8081:8081
+      - 8001:8001
+    # networks:
+    #   network:
+    #     ipv4_address: 10.5.0.5
+  postgres:
+    image: ankane/pgvector
+    environment:
+      PUID: 1000
+      PGID: 1000
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      POSTGRES_DB: knowlecule
+      POSTGRES_USER: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/pgvector/local-data:/data
+      - ./data/pgvector/pgdata:/var/lib/postgresql/data
+    # networks:
+    #   network:
+    #     ipv4_address: 10.5.0.6
+
+# volumes:
+#   chroma_persistent_folder:
+#     driver: local
+
+# networks:
+#   network:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 10.5.0.0/16
+#           gateway: 10.5.0.1

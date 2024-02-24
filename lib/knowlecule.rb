@@ -4,15 +4,22 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib') # Put our local lib in
 
 TMPFS = File.join("/tmp/knowlecule")
 
+Dotenv.load(File.join(__dir__, '..', '.env'))
+
 require "aoororachain"
 
 require "knowlecule/utils/glob"
+require "knowlecule/utils/arraylib"
+require "knowlecule/utils/linked-list"
+require "knowlecule/utils/logging"
+
+require "knowlecule/database/ohm"
+require "knowlecule/database/postgres"
 
 require "knowlecule/item"
-require "knowlecule/import"
+require "knowlecule/loader"
 
 require "knowlecule/cli"
-
 
 module Knowlecule
   autoload :CLI, "knowlecule/cli"

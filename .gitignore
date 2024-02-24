@@ -9,3 +9,5 @@
 /tmp/
 /Gemfile.lock
 .env
+/docker/data/
+/ansible/

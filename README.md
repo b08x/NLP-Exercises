@@ -25,6 +25,12 @@ gem install knowlecule
 require "knowlecule"
 ```
 
+http://rubynlp.org/
+https://github.com/arbox/nlp-with-ruby
+
+# Readability
+[lingua]() - Lingua::EN::Readability is a Ruby module which calculates statistics on English text
+
 ## Support
 
 If you want to report a bug, or have ideas, feedback or questions about the gem, [let me know via GitHub issues](https://github.com/b08x/knowlecule/issues/new) and I will do my best to provide a helpful answer. Happy hacking!

@@ -25,6 +25,18 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "pry-doc"
+  spec.add_development_dependency "pry-stack_explorer"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rb_sys"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "solargraph"
+
   # Runtime dependencies
-  spec.add_dependency "thor", "~> 1.2"
+  spec.add_dependency "aoororachain"
+  spec.add_dependency "drydock"
+  spec.add_dependency "highline"
+  spec.add_dependency "lingua"
 end

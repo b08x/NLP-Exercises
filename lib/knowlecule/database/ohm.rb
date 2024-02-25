@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "mimemagic"
 require "ohm"
 require "ohm/contrib"
 
@@ -14,9 +15,37 @@ rescue Ohm::Error => e
 end
 
 class Item < Ohm::Model
+  attr_accessor :path, :name, :extension, :type
+
   attribute :path
   attribute :filename
+  attribute :extension
   attribute :type # image, text, video, audio, multi
+
+  collection :documents, :Document
+
+  index :path
+  index :filename
+  index :extension
+  index :type
+
+  def self.info(file)
+    info = {}
+    info[:path] = Pathname.new(file).cleanpath.to_s
+    info[:extension] = File.extname(file)
+    info[:name] = File.basename(file, ".").gsub(info[:extension], "")
+    info[:mimetype] = mime(info[:path])
+    return info
+  end
+
+  def self.mime(file)
+    begin
+      mime = MimeMagic.by_magic(File.open(file))
+      mime.type unless mime.nil?
+    rescue NoMethodError
+      MimeMagic.by_path(File.open(file)).type
+    end
+  end
 end
 
 class Topic < Ohm::Model

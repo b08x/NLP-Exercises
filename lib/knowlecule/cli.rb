@@ -26,8 +26,19 @@ module Knowlecule
       Knowlecule::Menu.start
     end
 
+    about "summarize a git diff"
+    option :d, :diff, String, "diff"
+    command :gitmsg do |_obj|
+      _obj.option[:diff]
+    end
+
     about "import one or more files and/or folders"
+    action :D, :directory, "Import a folder"
+    action :F, :file, "Import a file"
+    option :p, :path, String, "Path"
     command :import do |obj|
+      # p obj.option[:directory]
+      # p obj.option[:path]
       require "pathname"
 
       sources = obj.argv.map {|source| Pathname.new(source)}
@@ -37,9 +48,8 @@ module Knowlecule
           puts "#{path} not valid...exiting"; exit
         end
       end
-
-      files = Knowlecule::Loader.new(sources)
-      files.import
+      p sources
+      Knowlecule::Loader.new(sources)
     end
 
   end # end cli class

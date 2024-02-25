@@ -3,23 +3,18 @@ version: '3.1'
 services:
   flowise:
     image: flowiseai/flowise
-    restart: always
+    container_name: flowise
+    restart: unless-stopped
     environment:
-        - PUID=1000
-        - PGID=1000
-        - PORT=3002
-        - PASSPHRASE=${PASSPHRASE}
-        - FLOWISE_USERNAME=${FLOWISE_USERNAME}
-        - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
-        - DEBUG=${DEBUG}
-        - DATABASE_PATH=${DATABASE_PATH}
-        - APIKEY_PATH=${APIKEY_PATH}
-        - SECRETKEY_PATH=${SECRETKEY_PATH}
-        - LOG_LEVEL=${LOG_LEVEL}
-        - LOG_PATH=${LOG_PATH}
-        - EXECUTION_MODE=${EXECUTION_MODE}
+      - PORT=3002
+      - DATABASE_PATH=/root/.flowise
+      - APIKEY_PATH=/root/.flowise
+      - SECRETKEY_PATH=/root/.flowise
+      - LOG_PATH=/root/.flowise/logs
+      - DEBUG=True
+      - LOG_LEVEL=debug
     ports:
-        - 3002:3002
+      - "3002:3002"
     volumes:
         - ./data/flowise:/root/.flowise
         - ./data/flowise/output:/data/output
@@ -29,6 +24,8 @@ services:
     #     ipv4_address: 10.5.0.3
   chromadb:
     image: ghcr.io/chroma-core/chroma:latest
+    container_name: chromadb
+    restart: unless-stopped
     volumes:
       - ./data/chroma:/chroma/chroma/
     environment:
@@ -36,26 +33,30 @@ services:
       PGID: 1000
       IS_PERSISTENT: TRUE
     ports:
-      - 8000:8000
+      - "8000:8000"
     # networks:
     #   network:
     #     ipv4_address: 10.5.0.4
   redis:
     image: redis/redis-stack:latest
+    container_name: redis
+    restart: unless-stopped
     environment:
       PUID: 1000
       PGID: 1000
     volumes:
       - ./data/redis/data:/data
     ports:
-      - 6379:6379
-      - 8081:8081
-      - 8001:8001
+      - "6379:6379"
+      - "8081:8081"
+      - "8001:8001"
     # networks:
     #   network:
     #     ipv4_address: 10.5.0.5
   postgres:
     image: ankane/pgvector
+    container_name: postgresql
+    restart: unless-stopped
     environment:
       PUID: 1000
       PGID: 1000
@@ -63,7 +64,7 @@ services:
       POSTGRES_DB: knowlecule
       POSTGRES_USER: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./data/pgvector/local-data:/data
       - ./data/pgvector/pgdata:/var/lib/postgresql/data

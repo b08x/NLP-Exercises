@@ -21,9 +21,9 @@ class MD2Text
     text = Kramdown::Document.new(File.read(@file_path)).to_s
     to_json(text)
   end
-  
+
   private
-  
+
   def to_json
     @text = Beckett::Document.new(text).to_json
     return json

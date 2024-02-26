@@ -5,13 +5,14 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 TMPFS = File.join("/tmp/knowlecule")
 
 require "aoororachain"
+require "composable_operations"
 require "dotenv"
-require "jsonl"
 require "faraday"
-require "langchainrb"
 require "hashie"
-require "net/http"
 require "json"
+require "jsonl"
+require "langchainrb"
+require "net/http"
 
 Dotenv.load(File.join(__dir__, "..", ".env"))
 
@@ -31,6 +32,7 @@ require "knowlecule/llm/localai"
 require "knowlecule/llm/ollama"
 
 require "knowlecule/loader"
+require "knowlecule/pipeline"
 
 require "knowlecule/cli"
 

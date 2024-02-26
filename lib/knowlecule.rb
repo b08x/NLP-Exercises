@@ -25,19 +25,23 @@ require "knowlecule/utils/text/fix_encoding"
 require "knowlecule/db/ohm"
 require "knowlecule/db/postgres"
 
+require "knowlecule/db/import"
+
 require "knowlecule/llm/flowise"
 require "knowlecule/llm/huggingface"
 require "knowlecule/llm/localai"
 require "knowlecule/llm/ollama"
 
-require "knowlecule/pipeline/parsers/ansible"
-require "knowlecule/pipeline/parsers/git"
-require "knowlecule/pipeline/parsers/md"
-require "knowlecule/pipeline/parsers/pdf"
-require "knowlecule/pipeline/parsers/ruby"
+require "knowlecule/pipeline/pipeline"
 
-require "knowlecule/import"
-require "knowlecule/pipeline"
+require "knowlecule/parsers/ansible"
+require "knowlecule/parsers/git"
+require "knowlecule/parsers/md"
+require "knowlecule/parsers/pdf"
+require "knowlecule/parsers/ruby"
+
+
+
 
 # module Knowlecule
 #   autoload :CLI, "cli"

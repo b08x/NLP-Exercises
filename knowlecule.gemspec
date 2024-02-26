@@ -34,10 +34,17 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry-stack_explorer"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rb_sys"
+  spec.add_development_dependency "rb-readline"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "solargraph"
 
+  
+  
+
   # Runtime dependencies
+  # spec.add_dependency 'google_palm_api'
+  # spec.add_dependency 'prompt_manager'
+  spec.add_dependency 'amazing_print'
   spec.add_dependency 'aoororachain'
   spec.add_dependency 'awesome_print'
   spec.add_dependency 'bcrypt_pbkdf'
@@ -46,6 +53,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'cli-ui'
   spec.add_dependency 'cohere'
   spec.add_dependency 'cohere-ruby'
+  spec.add_dependency 'color',       '~> 1.8'
   spec.add_dependency 'composable_operations'
   spec.add_dependency 'debug_me'
   spec.add_dependency 'decisiontree'
@@ -57,7 +65,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'epitome'
   spec.add_dependency 'faraday'
   spec.add_dependency 'find'
-  # spec.add_dependency 'google_palm_api'
+  spec.add_dependency 'gambiarra'
   spec.add_dependency 'google_search_results'
   spec.add_dependency 'graphr'
   spec.add_dependency 'hashie'
@@ -83,10 +91,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'ohm-contrib'
   spec.add_dependency 'oj'
   spec.add_dependency 'ollama-ai'
+  spec.add_dependency 'open-uri'
   spec.add_dependency 'open3'
   spec.add_dependency 'open4'
-  spec.add_dependency 'open-uri'
   spec.add_dependency 'openssl'
+  spec.add_dependency 'paint',       '~> 2.0'
   spec.add_dependency 'parallel'
   spec.add_dependency 'pdf-reader'
   spec.add_dependency 'pdf_paradise'
@@ -95,7 +104,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'poppler'
   spec.add_dependency 'pragmatic_segmenter'
   spec.add_dependency 'pragmatic_tokenizer'
-  # spec.add_dependency 'prompt_manager'
   spec.add_dependency 'pycall'
   spec.add_dependency 'redcarpet'
   spec.add_dependency 'redic'

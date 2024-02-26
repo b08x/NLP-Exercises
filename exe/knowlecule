@@ -1,24 +1,18 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 # TMPFS = File.join("/tmp/knowlecule")
 
-require "dotenv"
-require "tty-which"
 
-Dotenv.load(File.join(__dir__, "..", ".env"))
+# require "tty-which"
 
-puts "Gum is not installed"; exit unless TTY::Which.exist?("gum")
+# unless TTY::Which.exist?("gum")
+#   puts "Gum is not installed"
+# end
 
-require "cli"
-
-
-# Knowlecule::CLI.start(ARGV)
-
-require 'knowlecule/ui'
+require "knowlecule/ui"
 
 module Knowlecule
   module UI

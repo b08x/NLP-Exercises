@@ -3,10 +3,10 @@
 
 
 # require_relative 'pipeline/text/graph'
-require_relative 'pipeline/preprocessing/text/segment_tokenize'
-require_relative 'pipeline/preprocessing/text/feature_extraction'
-require_relative 'pipeline/preprocessing/text/hypernyms'
-require_relative 'pipeline/preprocessing/text/ldamodeler'
+require_relative 'preprocessing/text/segment_tokenize'
+require_relative 'preprocessing/text/feature_extraction'
+require_relative 'preprocessing/text/hypernyms'
+require_relative 'preprocessing/text/ldamodeler'
 
 
 

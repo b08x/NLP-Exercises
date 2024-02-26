@@ -3,7 +3,7 @@
 require 'rubygems'
 
 # Fetch the list of installed gems
-installed_gems = Gem::Specification.sort_by { |gem| gem.name }
+installed_gems = Gem::Specification.sort_by { |gem| gem.name }.uniq
 
 # Print the Markdown table header
 puts "| Gem Name | Version | Description |"
@@ -14,10 +14,10 @@ installed_gems.each do |gem|
   gem_name    = gem.name
   version     = gem.version.to_s
   description = gem.summary || gem.description
-  
+  repo        = gem.homepage
+
   description.gsub!(/\R/, ' ') # Replace newlines with spaces
-  description.gsub!(/\|/, '\|') # Escape pipe characters in Markdown 
+  description.gsub!(/\|/, '\|') # Escape pipe characters in Markdown
 
-  puts "| #{gem_name} | #{version} | #{description} |"
+  puts "| [#{gem_name}](#{repo}) | #{version} | #{description} |"
 end
-

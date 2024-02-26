@@ -2,12 +2,8 @@
 # frozen_string_literal: true
 
 module Knowlecule
-  class Document < Item
-
-    def initialize
+  module UI
+    class Menu
     end
-
   end
-
-
 end

@@ -11,3 +11,5 @@
 .env
 /docker/data/
 /ansible/
+/log/
+/images/

@@ -29,7 +29,7 @@ class Item < Ohm::Model
   index :extension
   index :type
 
-  def self.info(file)
+  def self.metadata(file)
     info = {}
     info[:path] = Pathname.new(file).cleanpath.to_s
     info[:extension] = File.extname(file)
@@ -37,11 +37,13 @@ class Item < Ohm::Model
     info[:mimetype] = mime(info[:path])
     return info
   end
-
+# The safe navigation operator (&.) is a way to call methods
+# on objects that may be nil without raising a NoMethodError exception.
+# https://www.rubydoc.info/gems/rubocop/0.43.0/RuboCop/Cop/Style/SafeNavigation
   def self.mime(file)
     begin
       mime = MimeMagic.by_magic(File.open(file))
-      mime.type unless mime.nil?
+      mime&.type # unless mime.nil?
     rescue NoMethodError
       MimeMagic.by_path(File.open(file)).type
     end
@@ -67,14 +69,7 @@ class Document < Ohm::Model
 
   include Ohm::Callbacks
   # include Ohm::Scope
-
-  attribute :path
-  attribute :name
-  attribute :type
-  attribute :processed
-
   attribute :title
-  attribute :summarization
   attribute :content
 
   reference :items, :Item
@@ -83,12 +78,8 @@ class Document < Ohm::Model
 
   list :chunks, :Chunk
 
-  unique :title
-  unique :path
-
   index :title
-  index :path
-  index :processed
+  index :content
 
   # scope do
   #   def pending
@@ -107,9 +98,9 @@ class Document < Ohm::Model
   def extract_text(path, type)
     case type
     when "application/pdf"
-      PDF2Text.new(path).text
+      Knowlecule::Extract::PDF.new(path).text
     when "text/markdown"
-      MD2Text.new(path).text
+      Knowlecule::Extract::Markdown.new(path).text
     else
       begin
         #TODO: this will sometimes return a TrueClass

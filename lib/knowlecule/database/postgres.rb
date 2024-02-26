@@ -5,6 +5,10 @@ require "pgvector"
 require "sequel"
 require "securerandom"
 
+include Logging
+
+logger.debug("Connecting to postgresql database")
+
 begin
   DB = Sequel.connect(ENV["POSTGRES"])
 
@@ -18,6 +22,8 @@ rescue StandardError => e
   logger.fatal e.to_s
 end
 
+logger.debug("Creating tables if they don't already exist")
+
 begin
   DB.create_table? (:items) do
     primary_key :id, type: :Bignum
@@ -25,7 +31,7 @@ begin
     column :filename, String
     column :extension, String
     column :mimetype, String
-    index [:path, :filename, :extension, :mimetype]
+    index %i[path filename extension mimetype] # %i creates an array of symbols
   end
 
   DB.create_table? :topics do

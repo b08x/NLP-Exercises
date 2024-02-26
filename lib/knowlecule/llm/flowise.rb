@@ -82,4 +82,4 @@ end
 # overrideConfig["temperature"] = 0.3
 # overrideConfig["maxTokens"] = 1024
 #
-# p q.inference(diff, overrideConfig)
+# p q.inference(question, overrideConfig)

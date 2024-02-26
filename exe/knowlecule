@@ -1,14 +1,8 @@
 #!/usr/bin/env ruby
 
-$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-
-require "drydock"
-require "highline/import"
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require "knowlecule"
 
-if ARGV.any?
-  Drydock.run!(ARGV, $stdin) if Drydock.run? && !Drydock.has_run?
-end
 
 # Knowlecule::CLI.start(ARGV)

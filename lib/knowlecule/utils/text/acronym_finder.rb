@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 # ~/scripts/acronym_finder.rb
 
 require 'pathname'

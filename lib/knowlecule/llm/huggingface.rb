@@ -31,11 +31,6 @@ module Knowlecule
         }.to_json
       end
 
-      # force an encoding and replace marks with nothing
-      def fix_encoding(input)
-        input.encode("UTF-8", "binary", invalid: :replace, undef: :replace, replace: "")
-      end
-
       def inference(text, temperature=0.5, max_new_tokens=512)
         retries = 0
 
@@ -78,19 +73,36 @@ module Knowlecule
 end
 
 # User prompt
-question = "In the training phase, a developer feeds their model a curated dataset so that it can “learn” everything it needs to about the type of data it will analyze. Then, in the inference phase, the model can make predictions based on live data to produce actionable results. What are the initial steps in this pipeline?"
+# question = "In the training phase, a developer feeds their model a curated dataset so that it can “learn” everything it needs to about the type of data it will analyze. Then, in the inference phase, the model can make predictions based on live data to produce actionable results. What are the initial steps in this pipeline?"
 
-context = "Document Processing with Ruby"
+# context = "Document Processing with Ruby"
 
-query = "We consult the popular Large Language Model interfaces of the day to help better understand the process through practical example. We apply this syntactic sugar to the 'text chunking' stage of the NLP pipeline to help "
+# query = "We consult the popular Large Language Model interfaces of the day to help better understand the process through practical example. We apply this syntactic sugar to the 'text chunking' stage of the NLP pipeline to help "
 
+# command = <<~PYTHON
+#   python - << EOF
+#   from InstructorEmbedding import INSTRUCTOR
+#   from langchain.embeddings import HuggingFaceInstructEmbeddings
 
+#   instructor_embeddings = HuggingFaceInstructEmbeddings(model_name="model",
+#                                                         model_kwargs={"device": device})
 
-hf = Knowlecule::LLM::HF.new("generation")
+#   embeddings = instructor_embeddings.embed_query(text)
+#   print("========")
+#   print(embeddings)
+# PYTHON
 
-x = hf.inference("two turntables and a ")
+# pp $models
 
-pp x
+# hf = Knowlecule::LLM::HF.new("rift")
+
+# result = hf.inference("explain what this is doing: #{command}")
+
+# pp result
+
+# x = hf.inference("two turntables and a ")
+#
+# pp x
 
 # hf = Knowlecule::LLM::HF.new("question_answering:")
 

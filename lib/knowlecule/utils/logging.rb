@@ -6,7 +6,7 @@ module Logging
 
   require "logger"
 
-  LOG_DIR = File.join(File.expand_path("..", __dir__), "log")
+  LOG_DIR = File.expand_path('log')
   LOG_LEVEL = Logger::DEBUG
   LOG_MAX_SIZE = 6_145_728
   LOG_MAX_FILES = 10

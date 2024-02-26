@@ -3,8 +3,7 @@
 
 $:.unshift File.expand_path(File.join(__dir__, "..", "lib"))
 
-require "drydock"
-require "highline/import"
+require "pathname"
 
 module Knowlecule
   class CLI
@@ -39,18 +38,14 @@ module Knowlecule
     command :import do |obj|
       # p obj.option[:directory]
       # p obj.option[:path]
-      require "pathname"
-
       sources = obj.argv.map {|source| Pathname.new(source)}
 
       sources.each do |path|
         unless path.realdirpath.exist?
           puts "#{path} not valid...exiting"; exit
         end
+        Knowlecule::Import.new(source)
       end
-      p sources
-      Knowlecule::Loader.new(sources)
     end
-
   end # end cli class
 end # end soundbot module

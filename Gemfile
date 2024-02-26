@@ -13,3 +13,5 @@ gem "rubocop-rake", "0.6.0"
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 gem "rbplotly", git: "https://github.com/b08x/rbplotly.git", branch: "development"
+
+gem "prompt_manager", git: "https://github.com/b08x/prompt_manager.git", branch: "development"

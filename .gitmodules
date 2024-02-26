@@ -1,0 +1,3 @@
+[submodule "vendor/prompt_manager"]
+	path = vendor/prompt_manager
+	url = git@github.com:b08x/prompt_manager.git

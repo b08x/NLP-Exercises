@@ -1,4 +1,7 @@
-require_relative "lib/knowlecule/version"
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'knowlecule/version'
 
 Gem::Specification.new do |spec|
   spec.name = "knowlecule"
@@ -117,6 +120,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty-box'
   spec.add_dependency 'tty-command'
   spec.add_dependency 'tty-config'
+  spec.add_dependency 'tty-which'
   spec.add_dependency 'wikipedia-client'
   spec.add_dependency 'wordnet'
   spec.add_dependency 'wordnet-defaultdb'

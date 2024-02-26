@@ -7,20 +7,38 @@ require "ohm/contrib"
 
 begin
   Ohm.redis = Redic.new(ENV["REDIS"])
-  # Ohm.redis.call "FLUSHDB"
-  # exit
+  puts CLI::UI.fmt "{{green:success!}}"
 rescue Ohm::Error => e
+  puts CLI::UI.fmt "{{red:Unable to connect to Redis cache}} {{red:#{e}}}"
   logger.fatal e.to_s
   exit
 end
 
+module Knowlecule
+  module DB
+    module Redis
+      module_function
+
+      def flush
+        puts CLI::UI.fmt "{{red:Flushing Redis Cache}} {{info:#{ENV["REDIS"]}}}"
+        Ohm.redis.call "FLUSHDB"
+        exit
+      end
+
+    end
+  end
+end
+
 class Item < Ohm::Model
-  attr_accessor :path, :name, :extension, :type
+  attr_accessor :path, :name, :extension, :type, :mtime
 
   attribute :path
   attribute :filename
   attribute :extension
   attribute :type # image, text, video, audio, multi
+  attribute :ctime
+  attribute :mtime
+
 
   collection :documents, :Document
 
@@ -35,6 +53,8 @@ class Item < Ohm::Model
     info[:extension] = File.extname(file)
     info[:name] = File.basename(file, ".").gsub(info[:extension], "")
     info[:mimetype] = mime(info[:path])
+    info[:ctime] = File.stat(file).ctime
+    info[:mtime] = File.stat(file).mtime
     return info
   end
 # The safe navigation operator (&.) is a way to call methods

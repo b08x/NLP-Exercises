@@ -1,4 +1,33 @@
 {
+	"frame": {
+		"prefix": "frame",
+		"description": "frame",
+		"scope": "ruby",
+		"body": [
+			"CLI::UI::Frame.open(\"Import\") do",
+			"",
+			"",
+			"",
+			"end"
+		]
+	},
+	"success": {
+		"prefix": "success",
+		"description": "success",
+		"scope": "ruby",
+		"body": [
+			"puts CLI::UI.fmt \"{{green:success!}}\""
+		]
+	},
+	"puts": {
+		"prefix": "puts",
+		"description": "puts",
+		"scope": "ruby",
+		"body": [
+			"puts CLI::UI.fmt \"{{info:Flushing Redis Cache}} {{red:#{source} does not exist}}\"",
+			""
+		]
+	},
 	"shebang": {
 		"prefix": "shebang",
 		"description": "shebang",

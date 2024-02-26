@@ -9,6 +9,8 @@ include Logging
 
 logger.debug("Connecting to postgresql database")
 
+
+
 begin
   DB = Sequel.connect(ENV["POSTGRES"])
 
@@ -18,6 +20,8 @@ begin
   DB.extension :pg_array, :pg_hstore
   DB.extension :pg_json
   DB.wrap_json_primitives = true
+  puts CLI::UI.fmt "{{green:success!}}"
+  
 rescue StandardError => e
   logger.fatal e.to_s
 end

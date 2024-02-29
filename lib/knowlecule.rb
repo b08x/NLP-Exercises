@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-
-
 # require "aoororachain"
 require "composable_operations"
 

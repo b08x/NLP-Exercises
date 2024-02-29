@@ -4,6 +4,13 @@
 require "dotenv"
 Dotenv.load(File.join(__dir__, "..", "..", ".env"))
 
+## Ensure all libs in vendor directory are available
+Dir["#{File.expand_path("../vendor", __FILE__)}/*/lib/"].each do |vendor_lib|
+  $:.unshift vendor_lib
+end
+
+require_relative '../../vendor/aia/lib/aia'
+
 require "os"
 require "mercenary"
 require "highline/import"
@@ -12,22 +19,13 @@ require "cli/ui"
 require "knowlecule/version"
 require "knowlecule/config"
 require "knowlecule/utils/glob"
-require "knowlecule/utils/fzf"
+# require "knowlecule/utils/fzf"
 require "knowlecule/utils/arraylib"
 require "knowlecule/utils/linked-list"
 require "knowlecule/utils/logging"
 
 require 'paint'
 require 'color'
-
-require 'gambiarra'
-require 'knowlecule/commands'
-
-require File.expand_path('../ui/base_view', __FILE__)
-views = Dir[File.expand_path('../ui/views/*', __FILE__)].map { |view| require(view) }
-
-
-#utils = Dir[File.expand_path("knowlecule/utils/*.rb", __dir__)].map { |util| require(util) }
 
 require "knowlecule"
 

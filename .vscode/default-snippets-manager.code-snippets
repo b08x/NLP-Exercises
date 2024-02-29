@@ -1,4 +1,36 @@
 {
+	"ollama_extra_headers": {
+		"prefix": "ollama_extra_headers",
+		"description": "ollama_extra_headers",
+		"scope": "ruby",
+		"body": [
+			"  # extra_headers: {",
+			"  #   \"X-Proxy-TTL\" => \"43200\", # For https://github.com/6/openai-caching-proxy-worker#specifying-a-cache-ttl",
+			"  #   \"X-Proxy-Refresh\": \"true\", # For https://github.com/6/openai-caching-proxy-worker#refreshing-the-cache",
+			"  #   \"Helicone-Auth\": \"Bearer HELICONE_API_KEY\", # For https://docs.helicone.ai/getting-started/integration-method/openai-proxy",
+			"  #   \"helicone-stream-force-format\" => \"true\", # Use this with Helicone otherwise streaming drops chunks # https://github.com/alexrudall/ruby-openai/issues/251",
+			"  # }"
+		]
+	},
+	"ollama_chat": {
+		"prefix": "ollama_chat",
+		"description": "ollama_chat",
+		"scope": "ruby",
+		"body": [
+			"# response = client.chat(",
+			"#   parameters: {",
+			"#     model: \"llava:7b-v1.6-mistral-q4_0\", # Required.",
+			"#     messages:    [",
+			"#       { role: \"system\", content: \"Behave as a Linux Systems Engineer\" },",
+			"#       { role: \"user\", content: \"Describe Linux Audio\" }",
+			"#     ], # Required.",
+			"#     temperature: 0.7",
+			"#   }",
+			"# )",
+			"#",
+			"# puts response.dig(\"choices\", 0, \"message\", \"content\")"
+		]
+	},
 	"frame": {
 		"prefix": "frame",
 		"description": "frame",

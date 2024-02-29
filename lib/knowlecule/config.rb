@@ -19,16 +19,14 @@ module Knowlecule
     private
 
     def load_config
-      default_config = File.join(__dir__, "config.default.yml")
+      default_config = File.join(__dir__, "..", "config.default.yml")
 
       unless Dir.exists?(CONFIG_HOME)
+        puts CLI::UI.fmt "{{info:Creating config folder}}"
         FileUtils.mkdir(CONFIG_HOME)
         FileUtils.cp(default_config, File.join(CONFIG_HOME, "config.yml"))
       end
-
     end
-
-
   end
 end
 

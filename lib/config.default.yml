@@ -9,19 +9,28 @@ models:
      sentiment: "distilbert-base-uncased-finetuned-sst-2-english"
      ruby_summarizaion: "nielsr/codet5-small-code-summarization-ruby"
      mistral: "mistralai/Mistral-7B-v0.1"
+     meta_llama: "meta-llama/Llama-2-70b-chat-hf"
+     rift: "morph-labs/rift-coder-v0-7b"
      superb: "superb/hubert-large-superb-er"
      mit: "MIT/ast-finetuned-audioset-10-10-0.4593"
   ollama:
     codellama: "7b"
+    deepseek-coder: "latest"
     gemma: "7b"
     llama2-uncensored: "latest"
     llava: "7b-v1.6-mistral-q4_0"
     mistral-openorca: "7b"
+    openchat: "7b"
     openhermes2.5-mistral: "7b-q4_K_M"
     phi: "latest"
     qwen: "7b"
     starcoder: "7b-base-q4_K_M"
+    tinyllama: "chat"
     wizard-vicuna-uncensored: "7b"
   localai:
     embedding: "bert-embeddings"
     tts: "whisper-1"
+
+flowise:
+  chatflows:
+    autogpt_ollama: "ee576eb6-f8b9-416b-b6ba-7a6cfcd80ffc"

@@ -15,3 +15,8 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem "rbplotly", git: "https://github.com/b08x/rbplotly.git", branch: "development"
 
 gem "prompt_manager", git: "https://github.com/b08x/prompt_manager.git", branch: "development"
+gem "mail", "~> 2.8"
+
+gem "pdf-reader", "~> 2.12"
+
+gem "pdf-textstream", "~> 0.1.0"

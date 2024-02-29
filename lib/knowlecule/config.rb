@@ -3,7 +3,7 @@
 
 require "tty-config"
 
-CONFIG_HOME = ENV["CONFIG_HOME"]
+CONFIG_HOME = File.join(ENV.fetch('HOME'), ".config")
 
 module Knowlecule
   class Config
@@ -19,13 +19,17 @@ module Knowlecule
     private
 
     def load_config
-      default_config = File.join(__dir__, "..", "config.default.yml")
+      default_config = File.join(File.expand_path("../../", __FILE__), "config.default.yml")
 
       unless Dir.exists?(CONFIG_HOME)
-        puts CLI::UI.fmt "{{info:Creating config folder}}"
+        Knowlecule::UI.say(:ok, "setting config")
         FileUtils.mkdir(CONFIG_HOME)
+      end
+
+      unless File.exist?(File.join(CONFIG_HOME, "config.yml"))
         FileUtils.cp(default_config, File.join(CONFIG_HOME, "config.yml"))
       end
+
     end
   end
 end

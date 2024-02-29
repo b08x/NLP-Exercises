@@ -12,4 +12,4 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 #   puts "Gum is not installed"
 # end
 
-require "knowlecule/ui"
+require "knowlecule"

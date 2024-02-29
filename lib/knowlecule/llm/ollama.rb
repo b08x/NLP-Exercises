@@ -3,18 +3,22 @@
 
 require "openai"
 require "wikipedia"
-client = OpenAI::Client.new(
-  access_token: "ollama",
-  uri_base: "http://tinybot.syncopated.net:11435",
-  request_timeout: 240
-)
+
+begin
+  client = OpenAI::Client.new(
+    access_token: "ollama",
+    uri_base: "http://tinybot.syncopated.net:11435",
+    request_timeout: 240
+  )
+rescue Faraday::ConnectionFailed
+  Knowlecule::UI.say(:error, "connection to local ollama failed")
+end
 
 def get_file_list(path)
   Dir.chdir(path) do
     return `ls -lah`
   end
 end
-
 
 def answer_music_theory_question(question)
   page = Wikipedia.find(question)
@@ -26,7 +30,6 @@ def answer_music_theory_question(question)
     "#{summary}\n\n**Sources:** #{links}"
   end
 end
-
 
 def execute_function(function_call)
   function_name = function_call["name"]
@@ -41,53 +44,51 @@ def execute_function(function_call)
   end
 end
 
-response =
-  client.chat(
-    parameters: {
-      model: "llava:7b-v1.6-mistral-q4_0", 
-      messages: [
-        { role: "system", content: "Use the available functions when responding to a query." },
-        { role: "user", content: "What is a major scale in music theory?" }
-      ],
-      functions: [
-        {
-          name: "get_file_list",
-          description: "Get a list of files",
-          parameters: {
-            type: :object,
-            properties: {
-              path: {
-                type: :string,
-                description: "The folder path, e.g. /home/b08x/"
-              }
-            },
-            required: ["path"]
+def function_test
+  response =
+    client.chat(
+      parameters: {
+        model: "llava:7b-v1.6-mistral-q4_0",
+        messages: [
+          { role: "system", content: "Use the available functions when responding to a query." },
+          { role: "user", content: "What is a major scale in music theory?" }
+        ],
+        functions: [
+          {
+            name: "get_file_list",
+            description: "Get a list of files",
+            parameters: {
+              type: :object,
+              properties: {
+                path: {
+                  type: :string,
+                  description: "The folder path, e.g. /home/b08x/"
+                }
+              },
+              required: ["path"]
+            }
+          },
+          {
+            name: "answer_music_theory_question",
+            description: "Answer a question about music theory",
+            parameters: {
+              type: :object,
+              properties: {
+                question: {
+                  type: :string,
+                  description: "The question about music theory"
+                }
+              },
+              required: ["question"]
+            }
           }
-        },
-        {
-          name: "answer_music_theory_question",
-          description: "Answer a question about music theory",
-          parameters: {
-            type: :object,
-            properties: {
-              question: {
-                type: :string,
-                description: "The question about music theory"
-              }
-            },
-            required: ["question"]
-          }
-        }
-      ]
-    }
-  )
+        ]
+      }
+    )
 
+  message = response.dig("choices", 0, "message")
 
+  return unless message["role"] == "assistant" && message["function_call"]
 
-message = response.dig("choices", 0, "message")
-p message
-
-if message["role"] == "assistant" && message["function_call"]
   result = process_function_call(message["function_call"])
-  p "Result: #{result}"
 end

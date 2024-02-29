@@ -38,8 +38,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "solargraph"
 
-  
-  
+
+
 
   # Runtime dependencies
   # spec.add_dependency 'google_palm_api'
@@ -49,7 +49,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'bcrypt_pbkdf'
   spec.add_dependency 'beckett'
   spec.add_dependency 'chroma-db'
-  spec.add_dependency 'cli-ui'
   spec.add_dependency 'cohere'
   spec.add_dependency 'cohere-ruby'
   spec.add_dependency 'color',       '~> 1.8'
@@ -80,7 +79,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'lingua'
   spec.add_dependency 'llm_memory'
   spec.add_dependency 'logging'
-  spec.add_dependency 'mercenary'
   spec.add_dependency 'mimemagic'
   spec.add_dependency 'multi_json'
   spec.add_dependency 'net-ssh'
@@ -95,7 +93,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'open4'
   spec.add_dependency 'openssl'
   spec.add_dependency 'os'
-  spec.add_dependency 'paint',       '~> 2.0'
+  spec.add_dependency 'pastel'
   spec.add_dependency 'parallel'
   spec.add_dependency 'pdf-reader'
   spec.add_dependency 'pdf_paradise'
@@ -133,6 +131,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'tty-box'
   spec.add_dependency 'tty-command'
   spec.add_dependency 'tty-config'
+  spec.add_dependency 'tty-prompt'
   spec.add_dependency 'tty-screen'
   spec.add_dependency 'tty-spinner'
   spec.add_dependency 'tty-which'

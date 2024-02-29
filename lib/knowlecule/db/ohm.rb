@@ -6,25 +6,22 @@ require "ohm"
 require "ohm/contrib"
 
 begin
-  Ohm.redis = Redic.new(ENV["REDIS"])
-  puts CLI::UI.fmt "{{green:success!}}"
+  Ohm.redis = Redic.new(ENV.fetch("REDIS", nil))
 rescue Ohm::Error => e
-  puts CLI::UI.fmt "{{red:Unable to connect to Redis cache}} {{red:#{e}}}"
-  logger.fatal e.to_s
+  Knowlecule::UI.say(:error, "Unable to connect to Redis Cache #{e}")
   exit
 end
 
+Knowlecule::UI.say("Connected to Redis Host!")
+
 module Knowlecule
-  module DB
-    module Redis
-      module_function
+  module Redis
+    module_function
 
-      def flush
-        puts CLI::UI.fmt "{{red:Flushing Redis Cache}} {{info:#{ENV["REDIS"]}}}"
-        Ohm.redis.call "FLUSHDB"
-        exit
-      end
-
+    def flush
+      Ohm.redis.call "FLUSHDB"
+      Knowlecule::UI.say("Redis Cache Flushed! host: #{ENV.fetch('REDIS')}")
+      exit
     end
   end
 end
@@ -38,7 +35,6 @@ class Item < Ohm::Model
   attribute :type # image, text, video, audio, multi
   attribute :ctime
   attribute :mtime
-
 
   collection :documents, :Document
 
@@ -55,18 +51,17 @@ class Item < Ohm::Model
     info[:mimetype] = mime(info[:path])
     info[:ctime] = File.stat(file).ctime
     info[:mtime] = File.stat(file).mtime
-    return info
+    info
   end
-# The safe navigation operator (&.) is a way to call methods
-# on objects that may be nil without raising a NoMethodError exception.
-# https://www.rubydoc.info/gems/rubocop/0.43.0/RuboCop/Cop/Style/SafeNavigation
+
+  # The safe navigation operator (&.) is a way to call methods
+  # on objects that may be nil without raising a NoMethodError exception.
+  # https://www.rubydoc.info/gems/rubocop/0.43.0/RuboCop/Cop/Style/SafeNavigation
   def self.mime(file)
-    begin
-      mime = MimeMagic.by_magic(File.open(file))
-      mime&.type # unless mime.nil?
-    rescue NoMethodError
-      MimeMagic.by_path(File.open(file)).type
-    end
+    mime = MimeMagic.by_magic(File.open(file))
+    mime&.type # unless mime.nil?
+  rescue NoMethodError
+    MimeMagic.by_path(File.open(file)).type
   end
 end
 
@@ -123,9 +118,9 @@ class Document < Ohm::Model
       Knowlecule::Extract::Markdown.new(path).text
     else
       begin
-        #TODO: this will sometimes return a TrueClass
+        # TODO: this will sometimes return a TrueClass
         # will need to refresh on langchainrb
-        #Langchain::Loader.load(path).value
+        # Langchain::Loader.load(path).value
         logger.warn("placeholder message for Langchain::Loader function")
       rescue Langchain::Loader::UnknownFormatError => e
         logger.warn("#{e.message}")
@@ -142,7 +137,6 @@ class Document < Ohm::Model
     self.processed = "true"
     save
   end
-
 end
 
 class Chunk < Ohm::Model

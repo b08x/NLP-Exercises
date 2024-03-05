@@ -10,7 +10,7 @@ TEST = :all
 module Knowlecule
   module Pipeline
     class Tokenizer < ComposableOperations::Operation
-      processes :chunks
+      processes :parts
 
       property :punct, default: :all, required: true
       property :stopwords, default: false, required: true
@@ -36,21 +36,9 @@ module Knowlecule
       end
 
       def execute
-        chunks.segment.map do |segment|
+        parts.segment.map do |segment|
           PragmaticTokenizer::Tokenizer.new(@options).tokenize(segment)
         end
-      end
-    end
-
-    class Lemma < ComposableOperations::Operation
-      processes :word
-
-      before do
-        @lem = Lemmatizer.new
-      end
-
-      def execute
-        @lem.lemma(word, :noun)
       end
     end
 
@@ -69,3 +57,6 @@ module Knowlecule
     end
   end
 end
+
+
+#TODO: syllables

@@ -5,18 +5,20 @@ require "mimemagic"
 require "ohm"
 require "ohm/contrib"
 
-begin
-  Ohm.redis = Redic.new(ENV.fetch("REDIS", nil))
-rescue Ohm::Error => e
-  Knowlecule::UI.say(:error, "Unable to connect to Redis Cache #{e}")
-  exit
-end
-
 Knowlecule::UI.say("Connected to Redis Host!")
 
 module Knowlecule
   module Redis
     module_function
+
+    def connect(host)
+      begin
+        Ohm.redis = Redic.new(host)
+      rescue Ohm::Error => e
+        Knowlecule::UI.say(:error, "Unable to connect to Redis Cache #{e}")
+        exit
+      end
+    end
 
     def flush
       Ohm.redis.call "FLUSHDB"
@@ -26,139 +28,56 @@ module Knowlecule
   end
 end
 
-class Item < Ohm::Model
-  attr_accessor :path, :name, :extension, :type, :mtime
-
-  attribute :path
-  attribute :filename
-  attribute :extension
-  attribute :type # image, text, video, audio, multi
-  attribute :ctime
-  attribute :mtime
-
-  collection :documents, :Document
-
-  index :path
-  index :filename
-  index :extension
-  index :type
-
-  def self.metadata(file)
-    info = {}
-    info[:path] = Pathname.new(file).cleanpath.to_s
-    info[:extension] = File.extname(file)
-    info[:name] = File.basename(file, ".").gsub(info[:extension], "")
-    info[:mimetype] = mime(info[:path])
-    info[:ctime] = File.stat(file).ctime
-    info[:mtime] = File.stat(file).mtime
-    info
-  end
-
-  # The safe navigation operator (&.) is a way to call methods
-  # on objects that may be nil without raising a NoMethodError exception.
-  # https://www.rubydoc.info/gems/rubocop/0.43.0/RuboCop/Cop/Style/SafeNavigation
-  def self.mime(file)
-    mime = MimeMagic.by_magic(File.open(file))
-    mime&.type # unless mime.nil?
-  rescue NoMethodError
-    MimeMagic.by_path(File.open(file)).type
-  end
-end
-
-class Topic < Ohm::Model
+class Subject < Ohm::Model
   attribute :name
   attribute :description
   attribute :vector
 
+  collection :items, :Item
+
   collection :documents, :Document
-  collection :chunks, :Chunk
+
+
+  # collection :sections, :Sections
 
   unique :name
   index :name
 end
 
-class Document < Ohm::Model
-  include Logging
 
-  extend Dry::Monads[:maybe]
+# Within a section, you typically find a cohesive group of related content that is organized around a common theme or topic. Sections are commonly used in documents, articles, or books to structure and organize information. They often contain headings, subheadings, paragraphs, lists, tables, or other elements that help to present and explain the context within that section as well as the document as a whole.
 
-  include Ohm::Callbacks
-  # include Ohm::Scope
-  attribute :title
-  attribute :content
-
-  reference :items, :Item
-
-  collection :topics, :Topic
-
-  list :chunks, :Chunk
-
-  index :title
-  index :content
-
-  # scope do
-  #   def pending
-  #     find(processed: "false")
-  #   end
-  # end
-
-  def self.call(path:)
-    result = find_document(path)
-  end
-
-  def self.find_document(path)
-    Maybe(Document.find(path: path).first).to_result(:document_not_found)
-  end
-
-  def extract_text(path, type)
-    case type
-    when "application/pdf"
-      Knowlecule::Extract::PDF.new(path).text
-    when "text/markdown"
-      Knowlecule::Extract::Markdown.new(path).text
-    else
-      begin
-        # TODO: this will sometimes return a TrueClass
-        # will need to refresh on langchainrb
-        # Langchain::Loader.load(path).value
-        logger.warn("placeholder message for Langchain::Loader function")
-      rescue Langchain::Loader::UnknownFormatError => e
-        logger.warn("#{e.message}")
-      end
-
-    end
-  end
-
-  def before_create
-    self.processed = "false"
-  end
-
-  def processed!
-    self.processed = "true"
-    save
-  end
-end
-
-class Chunk < Ohm::Model
+class Section < Ohm::Model
   include Ohm::DataTypes
   include Ohm::Callbacks
 
   attribute :uuid
-  attribute :text
-  attribute :segments, Type::Array
-  attribute :tokens, Type::Array
-  attribute :dep, Type::Hash
-  attribute :ner, Type::Hash
+
+  attribute :start_position  # Character position within the source item
+  attribute :end_position
+
+  attribute :content
   attribute :summary
 
-  list :words, :Word
-  list :embedding, :Embedding
+  attribute :headings
+  attribute :paragraphs, Type::Array
+  attribute :sentences, Type::Array
+
+  attribute :phrases, Type::Array # TODO: consider making seperate class?
+
+  attribute :lists # bullet point or number lists, ordered|unordered
+
+  attribute :figures # or :images
+  attribute :tables
+
+  attribute :embedding, :Embedding
 
   reference :document, :Document
-  reference :topic, :Topic
+  reference :subject, :Subject
+  reference :item, :Item
 
-  index :text
-  index :tokens
+  index :content
+  index :summary
   index :uuid
 
   unique :uuid
@@ -173,12 +92,21 @@ class Word < Ohm::Model
   include Ohm::Callbacks
 
   attribute :uuid
-  attribute :word
-  attribute :synsets, Type::Hash
+
+  # a term typically refers to a word or phrase that has a specific meaning within a particular context, domain, or subject area
+  attribute :term
+
+  list :tokens, :Token
+
   # attribute :part_of_speech
   # attribute :named_entity
 
-  reference :chunk, :Chunk
+  reference :chunk, :Part
+
+  reference :document, :Document
+  reference :item, :Item
+
+
   collection :embedding, :Embedding
 
   index :word
@@ -189,16 +117,37 @@ class Word < Ohm::Model
   end
 end
 
+class Token < Ohm::Model
+  include Ohm::DataTypes
+  include Ohm::Callbacks
+
+  attribute :character
+
+  reference :word, :Word
+
+  index :character
+
+end
+
+
+
+
 class Embedding < Ohm::Model
   include Ohm::DataTypes
   # include Ohm::Callbacks
 
   attribute :vector, Type::Array
 
-  reference :chunk, :Chunk
-  reference :topic, :Topic
+  reference :chunk, :Part
+  reference :topic, :Subject
 
   # def before_create
   #   self.id = SecureRandom.uuid
   # end
 end
+
+
+
+# related words to connect to
+# class Synsets < Ohm::Model
+# end

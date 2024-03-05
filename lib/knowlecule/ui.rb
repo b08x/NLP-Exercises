@@ -15,7 +15,7 @@ module Knowlecule
       @pastel = Pastel.new
     end
 
-    def say(type="",statement)
+    def say(type="", statement)
       case type
       when :ok
         @prompt.ok(statement)
@@ -30,7 +30,5 @@ module Knowlecule
         @pastel.say(statement)
       end
     end
-
   end
-
 end

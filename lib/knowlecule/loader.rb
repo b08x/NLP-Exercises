@@ -33,7 +33,7 @@ module Knowlecule
         path: file[:path],
         filename: file[:name],
         extension: file[:extension],
-        type: file[:mimetype],
+        type: file[:type],
         ctime: file[:ctime],
         mtime: file[:mtime]
       )

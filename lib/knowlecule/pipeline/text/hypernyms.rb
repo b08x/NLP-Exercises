@@ -28,3 +28,16 @@ class WordSenses < ComposableOperations::ComposedOperation
     hypernyms
   end
 end
+
+
+class Lemma < ComposableOperations::Operation
+  processes :word
+
+  before do
+    @lem = Lemmatizer.new
+  end
+
+  def execute
+    @lem.lemma(word, :noun)
+  end
+end

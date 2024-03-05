@@ -20,3 +20,5 @@ gem "mail", "~> 2.8"
 gem "pdf-reader", "~> 2.12"
 
 gem "pdf-textstream", "~> 0.1.0"
+
+gem "refinements", "~> 9.8"

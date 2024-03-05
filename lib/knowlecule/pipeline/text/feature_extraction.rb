@@ -4,14 +4,14 @@
 require 'ruby-spacy'
 
 class DependencyParser < ComposableOperations::Operation
-  processes :chunks
+  processes :parts
 
   before do
     @nlp = Spacy::Language.new('en_core_web_sm')
   end
 
   def execute
-    chunks.map do |segment|
+    parts.map do |segment|
       doc = @nlp.read(segment)
 
       doc.map { |token| [token.text, { lemma: token.lemma, pos: token.tag.downcase.to_sym, dep: token.dep }] }.to_h

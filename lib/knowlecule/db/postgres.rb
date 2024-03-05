@@ -9,36 +9,50 @@ include Logging
 
 logger.debug("Connecting to postgresql database")
 
+module Knowlecule
+  module PG
+
+    attr_accessor :db
+
+    def initialize
+      begin
+        @db = Sequel.connect(ENV['POSTGRES'])
+
+        @db.run("CREATE EXTENSION IF NOT EXISTS vector")
+        @db.run("CREATE EXTENSION IF NOT EXISTS hstore")
+
+        @db.extension :pg_array, :pg_hstore
+        @db.extension :pg_json
+        @db.wrap_json_primitives = true
+
+        logger.debug("Connected to pg")
+
+      rescue StandardError => e
+        logger.fatal e.to_s
+      end
 
 
-begin
-  DB = Sequel.connect(ENV["POSTGRES"])
 
-  DB.run("CREATE EXTENSION IF NOT EXISTS vector")
-  DB.run("CREATE EXTENSION IF NOT EXISTS hstore")
-
-  DB.extension :pg_array, :pg_hstore
-  DB.extension :pg_json
-  DB.wrap_json_primitives = true
-  puts CLI::UI.fmt "{{green:success!}}"
-  
-rescue StandardError => e
-  logger.fatal e.to_s
+    end
+  end
 end
 
 logger.debug("Creating tables if they don't already exist")
 
 begin
-  DB.create_table? (:items) do
+  @db.create_table? (:items) do
     primary_key :id, type: :Bignum
     column :path, String, unique: true
     column :filename, String
     column :extension, String
-    column :mimetype, String
+    column :type, String
+    column :size, Integer
+    column :mtime, Integer
+    column :ctime, Integer
     index %i[path filename extension mimetype] # %i creates an array of symbols
   end
 
-  DB.create_table? :topics do
+  @db.create_table? :subjects do
     primary_key :id, type: :Bignum
     column :name, String
     column :description, :text
@@ -46,7 +60,7 @@ begin
     index :name, unique: true
   end
 
-  DB.create_table?(:documents) do
+  @db.create_table?(:documents) do
     primary_key :id, type: :Bignum
     column :title, String
     column :content, String
@@ -58,7 +72,19 @@ begin
     index %i[metadata embedding]
   end
 
-  DB.create_table?(:chunks) do
+  @db.create_table?(:audiofiles) do
+    primary_key :id, type: :Bignum
+    column :title, String
+    column :content, String
+    jsonb :metadata
+    column :embedding, "vector(1536)"
+
+    foreign_key :topic_id, :topics
+    full_text_index :content
+    index %i[metadata embedding]
+  end
+
+  @db.create_table?(:sections) do
     primary_key :id, type: :Bignum
     column :text, String
     jsonb :tokenized_text
@@ -67,20 +93,20 @@ begin
     index %i[text document_id]
   end
 
-  DB.create_table?(:words) do
+  @db.create_table?(:words) do
     primary_key :id, type: :Bignum
     column :word, String
     column :synsets, "json"
     column :part_of_speech, String
     column :named_entity, String
-    foreign_key :chunk_id, :chunks
+    foreign_key :chunk_id, :parts
     index %i[word chunk_id]
   end
 
-  DB.create_table?(:embeddings) do
+  @db.create_table?(:embeddings) do
     primary_key :id, type: :Bignum
     column :vector, "vector(1536)"
-    foreign_key :chunk_id, :chunks
+    foreign_key :chunk_id, :parts
     foreign_key :topic_id, :topics
     index %i[vector chunk_id topic_id]
   end

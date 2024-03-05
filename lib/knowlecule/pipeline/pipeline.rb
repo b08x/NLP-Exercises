@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-
+require "composable_operations"
 # require_relative 'pipeline/text/graph'
-require_relative 'preprocessing/text/segment_tokenize'
-require_relative 'preprocessing/text/feature_extraction'
-require_relative 'preprocessing/text/hypernyms'
-require_relative 'preprocessing/text/ldamodeler'
+require_relative 'text/segment_tokenize'
+require_relative 'text/feature_extraction'
+require_relative 'text/hypernyms'
+require_relative 'text/ldamodeler'
 
 
 
@@ -26,34 +26,34 @@ TEXT
 
 
 
-# tokenized_sentences = Knowlecule::Pipeline::Chunker.perform(text)
+tokenized_sentences = Knowlecule::Pipeline::Parts.perform(text)
 
-# tokenized_sentences.each do |words|
-#   words.each do |word|
-#     p word
-#   end
-# end
-
-
-
-
-# class Topic < ComposableOperations::ComposedOperation
-#   use Modeler
-# end
-
-# topics = Topic.perform(chunked)
-
-# p topics
+tokenized_sentences.each do |words|
+  words.each do |word|
+    p word
+  end
+end
 
 
 
-# seg = Segmenter.new(text).perform
 
-# seg.segment.each do |t|
-#   tokenize = Tokenizer.new(t).perform
-#   p tokenize
-#   puts "-------"
-#   puts "\n"
-# end
+class Topic < ComposableOperations::ComposedOperation
+  use Modeler
+end
 
-#p tokenize
+topics = Topic.perform(chunked)
+
+p topics
+
+
+
+seg = Segmenter.new(text).perform
+
+seg.segment.each do |t|
+  tokenize = Tokenizer.new(t).perform
+  p tokenize
+  puts "-------"
+  puts "\n"
+end
+
+p tokenize

@@ -3,13 +3,11 @@
 
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
-# TMPFS = File.join("/tmp/knowlecule")
-
-
+# 
 # require "tty-which"
-
-# unless TTY::Which.exist?("gum")
-#   puts "Gum is not installed"
-# end
+#
+# $gum = TTY::Which.which("guma")
+#
+# logger.fatal("gum not installed, exiting");exit if $gum.nil?
 
 require "knowlecule"

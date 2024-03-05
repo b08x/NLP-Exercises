@@ -22,11 +22,12 @@ module Knowlecule
       default_config = File.join(File.expand_path("../../", __FILE__), "config.default.yml")
 
       unless Dir.exists?(CONFIG_HOME)
-        Knowlecule::UI.say(:ok, "setting config")
+        logger.debug("creating config folder")
         FileUtils.mkdir(CONFIG_HOME)
       end
 
       unless File.exist?(File.join(CONFIG_HOME, "config.yml"))
+        logger.debug("installing default config to #{CONFIG_HOME}")
         FileUtils.cp(default_config, File.join(CONFIG_HOME, "config.yml"))
       end
 
@@ -35,4 +36,4 @@ module Knowlecule
 end
 
 $config = Knowlecule::Config.new.config
-$models = $config.fetch(:models)
+# $models = $config.fetch(:models)

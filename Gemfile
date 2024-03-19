@@ -16,9 +16,6 @@ gem "rbplotly", git: "https://github.com/b08x/rbplotly.git", branch: "developmen
 
 gem "prompt_manager", git: "https://github.com/b08x/prompt_manager.git", branch: "development"
 gem "mail", "~> 2.8"
-
 gem "pdf-reader", "~> 2.12"
-
 gem "pdf-textstream", "~> 0.1.0"
-
 gem "refinements", "~> 9.8"

@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-module Logging
+module Socrates
+module Logger
   module_function
 
   require "logger"
@@ -27,15 +28,26 @@ module Logging
     end
 
     def logger_for(classname, methodname)
-      @loggers[classname] ||= configure_logger_for(classname, methodname)
+      @loggers[classname] ||= default(classname, methodname)
     end
 
-    def configure_logger_for(_classname, _methodname)
-      current_date = Time.now.strftime("%Y-%m-%d")
-      log_file = File.join(LOG_DIR, "knowlecule-#{current_date}.log")
-      logger = Logger.new(log_file, LOG_MAX_FILES, LOG_MAX_SIZE)
-      logger.level = log_level
-      logger
+    def default(_classname, _methodname)
+      @default ||= begin
+        current_date = Time.now.strftime("%Y-%m-%d")
+        log_file = File.join(LOG_DIR, "knowlecule-#{current_date}.log")
+        logger = Logger.new(log_file, LOG_MAX_FILES, LOG_MAX_SIZE)
+        logger.level = log_level
+        logger
+      end
     end
+    # def default(_classname, _methodname)
+    #   @default ||= begin
+    #     logger       = new($stdout)
+    #     logger.level = Logger::WARN
+    #     logger
+    #   end
+    # end
+
   end
+end
 end

@@ -3,11 +3,4 @@
 
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
-# 
-# require "tty-which"
-#
-# $gum = TTY::Which.which("guma")
-#
-# logger.fatal("gum not installed, exiting");exit if $gum.nil?
-
 require "knowlecule"

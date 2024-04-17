@@ -1,6 +1,9 @@
-[submodule "vendor/prompt_manager"]
-	path = vendor/prompt_manager
-	url = git@github.com:b08x/prompt_manager.git
-[submodule "vendor/aia"]
-	path = vendor/aia
-	url = git@github.com:b08x/aia.git
+[submodule "vendor/data-driven-characters"]
+	path = vendor/data-driven-characters
+	url = git@github.com:b08x/data-driven-characters.git
+[submodule "vendor/narrator"]
+	path = vendor/narrator
+	url = git@github.com:b08x/narrator.git
+[submodule "vendor/prompt-lesson-plan"]
+	path = vendor/prompt-lesson-plan
+	url = git@github.com:b08x/prompt-lesson-plan.git

@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "fileutils"
 require "tty-config"
 
-CONFIG_HOME = File.join(ENV.fetch('HOME'), ".config")
+CONFIG_HOME = File.join(Dir.home, ".config")
 
 module Knowlecule
   class Config
+    include Logging
     attr_accessor :config
 
     def initialize
@@ -19,9 +21,9 @@ module Knowlecule
     private
 
     def load_config
-      default_config = File.join(File.expand_path("../../", __FILE__), "config.default.yml")
+      default_config = File.join(File.expand_path("..", __dir__), "config.default.yml")
 
-      unless Dir.exists?(CONFIG_HOME)
+      unless Dir.exist?(CONFIG_HOME)
         logger.debug("creating config folder")
         FileUtils.mkdir(CONFIG_HOME)
       end
@@ -30,7 +32,6 @@ module Knowlecule
         logger.debug("installing default config to #{CONFIG_HOME}")
         FileUtils.cp(default_config, File.join(CONFIG_HOME, "config.yml"))
       end
-
     end
   end
 end

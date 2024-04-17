@@ -1,0 +1,13 @@
+Title:
+Chapter 2 Review of Rhythmic Description and Transformation Literature
+==========
+Paragraph:
+Rhythmic transformation of drum recordings is inherently connected with the history of sound recording and sampling technology progressing from the end of 19th century to the digital era of the present day. In the late 1940s, French composer Pierre Schaeffer, by means of discs, tape recorders, and several kinds of analogue devices, pioneered the manipulation and sampling of recorded sounds. He was motivated by the possibilities that this technique introduced for creation of new artistic works. An example of Schaeffer's compositional approach to rhythmic transformations of drum recordings can be heard in the piece named Étude aux Tourniquets (Toy Tops and Percussion Instruments) part of his Cinq Études de Bruits (Five Studies of Noises) (Schrader, 1982). Several such techniques applied to pre-recorded sounds using analogue tape were described by Serra (1989) in the context of transformations in electronic music. More recently, sampling became one leading practice for many DJ-orientated electronic music genres that evolved with the development of affordable home-based studio equipment. Electronic music genres are characterised by a high degree of manipulation of drum recordings using techniques such as drum resequencing, time-stretching and pitch-shifting (Collins, 2001; Hockman, 2007; Hockman, 2014).
+==========
+Paragraph:
+Creative manipulations of drum recordings developed along with the early use of hardware samplers and evolved into sophisticated digital audio effects and support applications with rhythmic transcription functionalities (e.g., automatic beat and rhythmic pattern detection). Early digital audio effects relied on digital signal processing (DSP) algorithms (Zölzer, 2011), but in the recent years deep learning (DL) techniques have emerged as prominent creative tools that have introduced musicians to new modes of music creation (Knees et al., 2016, 2015). These techniques are capable of sound transformation as well as generation, and within this dissertation, the title refers to a special use case of deep learning methods applied to musical signals that target rhythmic transformation of drum recordings. In this chapter, an overview of components related to rhythmic description and transformation is presented to provide an understanding of the history and current trends within the field of music informatics. Section 2.1
+==========
+PageNumber:
+9
+==========
+  

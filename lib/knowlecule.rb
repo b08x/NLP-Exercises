@@ -19,6 +19,8 @@ Dotenv.load(File.join(__dir__, "..", ".env"))
 #   $:.unshift vendor_lib
 # end
 
+require "knowlecule/utils/logging"
+
 require "knowlecule/version"
 require "knowlecule/config"
 
@@ -27,7 +29,6 @@ require "knowlecule/ui"
 require "knowlecule/utils/arraylib"
 require "knowlecule/utils/glob"
 require "knowlecule/utils/linked-list"
-require "knowlecule/utils/logging"
 require "knowlecule/utils/text/fix_encoding"
 # require "knowlecule/utils/text/acronym_finder"
 # require "knowlecule/utils/text/normalize_pathnames"

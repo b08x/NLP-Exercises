@@ -1,71 +1,105 @@
 #!/usr/bin/env python
-import numpy as np
 import argparse
-import librosa
 import os
-import tempfile
+from concurrent.futures import ThreadPoolExecutor
+from pydub import AudioSegment
+from pydub.silence import split_on_silence
+from pydub.effects import normalize
+from tqdm import tqdm
+from scipy.signal import butter, sosfiltfilt 
 
-def split_on_silence(audio_path, silence_threshold=-50, silence_duration=10):
-    """
-    Splits an audio file on silence.
 
-    Parameters
-    ----------
-    audio_path : str
-        Path to the audio file.
-    silence_threshold : int
-        The energy level below which silence is detected.
-    silence_duration : int
-        The minimum duration of silence (in seconds) required to split the audio.
+# def save_chunk(chunk, start_time, output_dir, output_format):
+#     # normalized_chunk = normalize(chunk)  
+#     # mono_chunk = normalized_chunk.set_channels(1)  # Convert to mono
+#     chunk.export(os.path.join(output_dir, f'chunk_{start_time}.{output_format}'), format=output_format)
 
-    Returns
-    -------
-    list of str
-        List of audio file paths after splitting.
-    """
-    # Load the audio file
-    y, sr = librosa.load(audio_path, sr=None)
+def save_chunk(chunk  , start_time, output_dir, output_format):
+    # normalized_chunk = normalize(chunk)  
+    # mono_chunk =   normalized_chunk.set_channels(1)  # Convert to mono
+    chunk.export(os.path.join(output_dir, f'chunk_{start_time:08d}.{output_format}'), format=output_format)
 
-    # Extract Mel-spectrogram features
-    S = librosa.feature.melspectrogram(y=y, sr=sr, n_mels=128)
 
-    # Convert to decibels
-    log_S = librosa.power_to_db(S, ref=np.max)
+def merge_short_chunks(chunks, min_chunk_length_ms):
+    merged_chunks = []
+    current_chunk = chunks[0]
 
-    # Find indices where the energy is below the threshold
-    below_threshold = np.where(log_S < silence_threshold)[0]
+    for chunk in chunks[1:]:
+        if len(current_chunk) + len(chunk) < min_chunk_length_ms:
+            current_chunk += chunk
+        else:
+            merged_chunks.append(current_chunk)
+            current_chunk = chunk
 
-    # Find the indices where the silence duration is greater than the threshold
-    split_indices = np.where(np.diff(below_threshold) > silence_duration)[0] + 1
+    merged_chunks.append(current_chunk)
+    return merged_chunks
 
-    # Create a temporary output directory
-    temp_dir = tempfile.TemporaryDirectory()
+def split_audio(input_file, output_dir, chunk_length_ms, output_format, silence_based):
+    # Load the input audio file using Pydub
+    audio = AudioSegment.from_file(input_file)
 
-    # Split the audio file
-    file_parts = []
-    start, end = 0, below_threshold[0]
-    for i in split_indices:
-        # Write the current segment to a file
-        segment_name = os.path.join(temp_dir.name, f"part_{i}.wav")
-        librosa.output.write_wav(segment_name, y[start:end], sr)
+    # Create the output directory if it doesn't exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-        # Update the start and end indices
-        start, end = end, below_threshold[i]
+    if silence_based:
+        # Split the audio file based on silence
+        min_silence_len = 300  # Minimum length of silence in milliseconds
+        silence_thresh = -60   # Silence threshold in dB
+        chunks = split_on_silence(audio, min_silence_len=min_silence_len, silence_thresh=silence_thresh)
 
-    # Write the last segment to a file
-    segment_name = os.path.join(temp_dir.name, f"part_{len(split_indices)}.wav")
-    librosa.output.write_wav(segment_name, y[start:], sr)
+        # Merge adjacent chunks shorter than the specified length
+        chunks = merge_short_chunks(chunks, chunk_length_ms)
 
-    # Return the list of split files
-    return [os.path.join(temp_dir.name, f"part_{i}.wav") for i in range(len(split_indices) + 1)]
+        # Set up progress bar with tqdm
+        pbar = tqdm(total=len(chunks), desc="Processing chunks based on silence")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Split an audio file on silence.")
+        # Save chunks in parallel using ThreadPoolExecutor
+        with ThreadPoolExecutor() as executor:
+            for i, chunk in enumerate(chunks):
+                executor.submit(save_chunk, chunk, i, output_dir, output_format).add_done_callback(lambda x: pbar.update(1))
+
+    else:
+        # Calculate the total length of the audio in milliseconds and the number of full chunks
+        audio_length_ms = len(audio)
+        num_chunks = audio_length_ms // chunk_length_ms
+
+        # Set up progress bar with tqdm
+        pbar = tqdm(total=num_chunks + (audio_length_ms % chunk_length_ms != 0), desc="Processing fixed-size chunks")
+
+        # Split and save chunks in parallel using ThreadPoolExecutor
+        with ThreadPoolExecutor() as executor:
+            for i in range(num_chunks):
+                start_time = i * chunk_length_ms
+                end_time = (i + 1) * chunk_length_ms
+                chunk = audio[start_time:end_time]
+                executor.submit(save_chunk, chunk, start_time, output_dir, output_format).add_done_callback(lambda x: pbar.update(1))
+
+            # Handle the last chunk if there is any remainder
+            if audio_length_ms % chunk_length_ms != 0:
+                start_time = num_chunks * chunk_length_ms
+                end_time = audio_length_ms
+                chunk = audio[start_time:end_time]
+                executor.submit(save_chunk, chunk, start_time, output_dir, output_format).add_done_callback(lambda x: pbar.update(1))
+
+    # Close progress bar
+    pbar.close()
+    
+
+def main():
+    # Set up argument parser for the CLI app
+    parser = argparse.ArgumentParser(description="Split an audio file into equally sized chunks.")
     parser.add_argument("input_file", help="Path to the input audio file.")
-    parser.add_argument("temp_dir", help="Path to the temporary directory for split files.")
+    parser.add_argument("output_dir", help="Path to the output directory where chunks will be saved.")
+    parser.add_argument("--chunk_length", type=int, default=300000, help="Length of each chunk in milliseconds (default: 300000 ms / 5 minutes).")
+    parser.add_argument("--output_format", type=str, default="wav", help="Output format for the audio chunks (default: wav). Supported formats include wav, mp3, and ogg.")
+    parser.add_argument("--silence_based", action="store_true", help="Split the audio based on silence instead of fixed-size chunks. If set, --chunk_length is ignored.")
+
+    # Parse the arguments
     args = parser.parse_args()
 
-    split_files = split_on_silence(args.input_file, args.temp_dir)
-    print("Split files:")
-    for i, split_file in enumerate(split_files):
-        print(f"{i+1}. {split_file}")
+    # Call the split_audio function with the provided arguments
+    split_audio(args.input_file, args.output_dir, args.chunk_length, args.output_format, args.silence_based)
+
+if __name__ == "__main__":
+    main()

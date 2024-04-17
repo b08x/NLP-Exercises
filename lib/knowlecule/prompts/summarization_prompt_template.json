@@ -1,0 +1,1 @@
+{"_type":"prompt","input_variables":["text"],"template":"Summarize the following text in 50 tokens or less:\n{text}"}

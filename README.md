@@ -1,48 +1,115 @@
-# knowlecule
+# Knowlecule: NLP Tools
 
-[![Gem Version](https://img.shields.io/gem/v/knowlecule)](https://rubygems.org/gems/knowlecule)
-[![Gem Downloads](https://img.shields.io/gem/dt/knowlecule)](https://www.ruby-toolbox.com/projects/knowlecule)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/b08x/knowlecule/ci.yml)](https://github.com/b08x/knowlecule/actions/workflows/ci.yml)
-[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/b08x/knowlecule)](https://codeclimate.com/github/b08x/knowlecule)
 
-TODO: Description of this gem goes here.
 
----
 
-- [Quick start](#quick-start)
-- [Support](#support)
-- [License](#license)
-- [Code of conduct](#code-of-conduct)
-- [Contribution guide](#contribution-guide)
 
-## Quick start
 
-```
-gem install knowlecule
-```
 
-```ruby
-require "knowlecule"
-```
+**Disclaimer**
+This project is currently for informational and educational purposes only,
 
-http://rubynlp.org/
-https://github.com/arbox/nlp-with-ruby
+**Key Features**
 
-# Readability
-[lingua]() - Lingua::EN::Readability is a Ruby module which calculates statistics on English text
+* **Redis ORM with Ohm:** Provides object-relational mapping for storing and managing document metadata,  topics, sections, embeddings, and their relationships.
+* **Document Structure:** Supports a variety of document types (text, images, audio, video) with metadata extraction.
+* **NLP Integration:** Designed to incorporate NLP pipelines for tasks like:
+   * Text summarization
+   * Embedding generation
+   * Topic modeling
+   * Knowledge graph construction (future addition)
 
-## Support
+**NLP Libraries**
 
-If you want to report a bug, or have ideas, feedback or questions about the gem, [let me know via GitHub issues](https://github.com/b08x/knowlecule/issues/new) and I will do my best to provide a helpful answer. Happy hacking!
+This project leverages a combination of powerful Ruby and Python libraries for a wide array of NLP tasks.
 
-## License
+**Ruby:**
 
-The gem is available as open source under the terms of the [MIT License](LICENSE.txt).
+* **Text Processing and Analysis:**
+   * **engtagger:**  Part-of-speech tagging.
+   * **lemmatizer:** Reduces words to their root form (lemmatization).
+   * **lingua:** Language identification.
+   * **nokogiri:** HTML and XML parsing.
+   * **pragmatic_segmenter, pragmatic_tokenizer:** Text segmentation and tokenization.
+   * **ruby-spacy:** Access to SpaCy NLP models.
+   * **syntax_tree:**  Syntactic parsing.
+   * **wordnet, wordnet-defaultdb:** Access to the WordNet lexical database.
+* **Document Format Handling:**
+   * **docsplit:** Splits documents across various formats.
+   * **hexapdf, pdf-reader, pdf_paradise, poppler:** PDF parsing and manipulation.
+* **Topic Modeling:**
+   * **epitome:**  LDA-based topic modeling.
+   * **tomoto:** A variety of topic modeling algorithms.
+* **Knowledge Representation:**
+   * **graphr:** Graph data structures for knowledge graph construction.
+* **LLM Frameworks:**
+   * **hugging-face:** Access to pre-trained transformers and LLM integration.
+   * **langchainrb:** Framework for building and interacting with LLM-powered applications.
 
-## Code of conduct
+**Python:**
 
-Everyone interacting in this project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](CODE_OF_CONDUCT.md).
+* **txtaxi:**  Framework for building customizable NLP pipelines.
+* **promptools:**  Tools for working with language model prompts, improving prompt engineering.
 
-## Contribution guide
+**Integration**
 
-Pull requests are welcome!
+While the core data modeling is in Ruby, the project utilizes Python's strengths for specialized NLP tasks.  Tools like `pycall` facilitate communication between the Ruby and Python components of the project.
+
+
+**Project Structure**
+
+* **exe/knowlecule:**  The primary executable entry point.
+* **lib/knowlecule:**
+   * **config.rb:**  Centralized project configuration.
+   * **db:** Handles database interactions (Redis, potentially PostgreSQL in the future).
+   * **item:**  Models for various document types (document, image, audio, video).
+   * **llm:**   Integration with Large Language Models (LLMs) from different providers, enabling NLP tasks.
+   * **loader.rb:** Loads documents from various sources.
+   * **parser.rb:**  Parses document content based on their file types.
+   * **pipeline:**  Defines NLP processing pipelines with modules for text, audio, etc.
+   * **ui.rb:**  Command-line interface components.
+   * **utils:**  Supporting utility modules for data manipulation, logging, and more.
+* **config.default.yml:** Default project configuration template.
+* **test:** Contains test cases and supporting files.
+* **vendor:** External dependencies.
+* **docker:** Docker configuration for containerizing core components.
+* **ansible:** Ansible playbooks and roles for infrastructure automation.
+
+**Getting Started**
+
+1. **Prerequisites:**
+   * Ruby (version 2.7 or later)
+   * Redis server
+   * Docker (if using containerization)
+   * Ansible (if using Ansible for infrastructure)
+2. **Installation:**
+   ```bash
+   git clone https://github.com/your-username/knowlecule.git
+   cd knowlecule
+   bundle install
+   ```
+3. **Configuration:**
+   * Copy `config.default.yml` to `config.yml` and edit as needed.
+   * Ensure the `REDIS` environment variable points to your Redis instance.
+4. **Run Basic Example:** (Adjust if not executable from the project root)
+   ```bash
+   ./exe/knowlecule
+   ```
+
+**Development**
+
+* Follow existing coding conventions and style guides.
+* Write test cases for new features.
+
+**Roadmap**
+
+* **Expand NLP Pipelines:** Add more sophisticated analysis capabilities to `lib/knowlecule/pipeline`.
+* **Knowledge Graph:** Integrate graph database structures to represent interconnected knowledge from documents.
+* **Search Interface:** Develop a user-friendly search interface to query the knowledge base.
+
+**Contributions**
+
+We welcome contributions!
+
+1. Open an issue to discuss proposed changes.
+2. Submit a pull request with well-documented changes and tests.

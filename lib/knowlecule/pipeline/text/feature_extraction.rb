@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
-
 require 'ruby-spacy'
 
 class DependencyParser < ComposableOperations::Operation
   processes :parts
 
   before do
-    @nlp = Spacy::Language.new('en_core_web_sm')
+    @nlp = Spacy::Language.new('en_core_web_lg')
   end
 
   def execute

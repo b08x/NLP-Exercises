@@ -43,6 +43,7 @@ Gem::Specification.new do |spec|
 
   # Runtime dependencies
   # spec.add_dependency 'google_palm_api'
+  spec.add_dependency 'algorithms'
   spec.add_dependency 'amazing_print'
   spec.add_dependency 'aoororachain'
   spec.add_dependency 'awesome_print'

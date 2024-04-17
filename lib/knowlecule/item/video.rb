@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
-class Audiofile < Ohm::Model
+class Videofile < Ohm::Model
   include Logging
 
   extend Dry::Monads[:maybe]

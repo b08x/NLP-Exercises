@@ -11,14 +11,15 @@ module Knowlecule
 
       HEADERS = {
         "Content-Type" => "application/json",
-        "Authorization" => "Bearer #{ENV.fetch('HUGGINGFACE_API_KEY', nil)}"
+        "Authorization" => "Bearer #{ENV.fetch('HUGGINGFACEHUB_API_TOKEN', nil)}"
       }
 
       attr_reader :function, :model
 
       def initialize(model)
         @function = function || "generate_text"
-        @model = $models["huggingface"]["#{model}"] || "meta-llama/Llama-2-70b-chat-hf"
+        # @model = $models["huggingface"]["#{model}"] || "meta-llama/Llama-2-70b-chat-hf"
+        @model = model
         @api_url = "#{HOST}/#{@model}"
       end
 
@@ -108,3 +109,30 @@ end
 
 # x = hf.create_json_object(question,context)
 # pp hf.inference(x)
+
+
+# https://huggingface.co/tasks/sentence-similarity
+
+# 
+# data = { 
+  # source_sentence: "That is a happy person",
+  # sentences: [
+    # "That is a happy dog",
+    # "That is a very happy person",
+    # "Today is a sunny day"
+  # ]
+# }
+# 
+# 
+# def create_j_object(source_sentence, sentences=[])
+  # {
+    # inputs: {
+      # source_sentence: source_sentence,
+      # sentences: sentences
+    # }
+  # }.to_json
+# end
+# 
+# hf = Knowlecule::LLM::HF.new("sentence-transformers/paraphrase-MiniLM-L3-v2")
+# pp hf.inference(data)
+# 

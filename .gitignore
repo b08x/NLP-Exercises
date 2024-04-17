@@ -13,3 +13,11 @@
 /ansible/
 /log/
 /images/
+/env/
+.ipynb_checkpoints/
+*.log
+.kodiak.toml
+.overcommit.yml
+.prettierignore
+.rubocop.yml
+**/**/.env

@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
 require 'lemmatizer'
 require 'pragmatic_segmenter'
@@ -10,7 +9,7 @@ TEST = :all
 module Knowlecule
   module Pipeline
     class Tokenizer < ComposableOperations::Operation
-      processes :parts
+      processes :text
 
       property :punct, default: :all, required: true
       property :stopwords, default: false, required: true
@@ -36,8 +35,14 @@ module Knowlecule
       end
 
       def execute
-        parts.segment.map do |segment|
-          PragmaticTokenizer::Tokenizer.new(@options).tokenize(segment)
+        begin
+          text.segment.map do |segment|
+            PragmaticTokenizer::Tokenizer.new(@options).tokenize(segment)
+          end
+        rescue NoMethodError => e
+          p e
+        ensure
+          PragmaticTokenizer::Tokenizer.new(@options).tokenize(text.text)
         end
       end
     end

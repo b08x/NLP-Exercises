@@ -9,7 +9,7 @@ module Knowlecule
     class Flowise
       MAX_RETRY = 60
 
-      HOST = ENV.fetch('FLOWISE_HOST')
+      HOST = ENV.fetch('FLOWISE_API_ENDPOINT')
       HEADERS = {
         "Content-Type" => "application/json",
         "Authorization" => "Bearer #{ENV.fetch('FLOWISE_API_KEY', nil)}"

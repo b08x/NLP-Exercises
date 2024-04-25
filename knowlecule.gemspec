@@ -98,7 +98,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pastel'
   spec.add_dependency 'parallel'
   spec.add_dependency 'pdf-reader'
-  spec.add_dependency 'pdf_paradise'
+  # spec.add_dependency 'pdf_paradise'
   spec.add_dependency 'pg'
   spec.add_dependency 'pgvector'
   spec.add_dependency 'poppler'

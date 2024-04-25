@@ -36,7 +36,7 @@ require "knowlecule/utils/text/fix_encoding"
 require "knowlecule/db/ohm"
 require "knowlecule/db/postgres"
 
-Knowlecule::Redis.connect(ENV['REDIS'])
+#Knowlecule::Redis.connect(ENV['REDIS'])
 
 require "knowlecule/llm/flowise"
 require "knowlecule/llm/huggingface"

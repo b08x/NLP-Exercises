@@ -1,27 +1,194 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gemspec
+# Install basic gems
+gem 'irb'
+gem 'iruby', '>= 0.7.4'
+gem 'pycall', '>= 1.5.1'
 
-gem "minitest", "~> 5.11"
-gem "minitest-rg", "~> 5.3"
-gem "rake", "~> 13.0"
-gem "rubocop", "1.60.2"
-gem "rubocop-minitest", "0.34.5"
-gem "rubocop-packaging", "0.5.2"
-gem "rubocop-performance", "1.20.2"
-gem "rubocop-rake", "0.6.0"
+gem 'activesupport'
+gem 'awesome_print'
+gem 'bcrypt_pbkdf'
+gem 'bundler'
+gem 'childprocess'
+gem 'colorize'
+gem 'coltrane'
+gem 'debug'
+gem 'dry-initializer'
+gem 'dry-monads'
+gem 'ed25519'
+gem 'eventmachine'
+gem 'ffi'
+gem 'fractional'
+gem 'geo_coord'
+gem 'hashie'
+gem 'highline'
+gem 'i18n'
+gem 'json'
+gem 'jsonl'
+gem 'kramdown'
+gem 'logging'
+gem 'minitest'
+gem 'mocha'
+gem 'multi_json'
+# gem 'mysql2'
+gem 'net-ssh'
+gem 'open3'
+gem 'open4'
+gem 'parallel'
+gem 'pastel'
+gem 'pg'
+gem 'pry'
+gem 'pry-doc'
+gem 'psych'
+gem 'rb-readline'
+gem 'rake'
+gem 'rdoc'
+gem 'redcarpet'
+gem 'rexml'
+gem 'rouge'
+gem 'rugged'
+gem 'ruport'
+gem 'sequel'
+gem 'sqlite3'
+gem 'sync'
+gem 'sys-proctable'
+gem 'treetop'
+gem 'tty-box'
+gem 'tty-command'
+gem 'tty-config'
+gem 'tty-markdown'
+gem 'tty-prompt'
+gem 'tty-screen'
+gem 'yaml'
+
+gem 'yajl-ruby', require: 'yajl'
+
+gem 'charty', '>= 0.2.12'
+gem 'matplotlib', '>= 1.2.0'
+gem 'numpy', '>= 0.4.0'
+gem 'pandas', '>= 0.3.8'
+gem 'unicode_plot', '>= 0.0.5'
+
+gem 'daru'
+gem 'daru-view'
+gem 'enumerable-statistics'
+gem 'ffi-rzmq'
+gem 'numo-linalg'
+gem 'numo-narray'
+gem 'rumale'
 
 git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 
-gem "distribution"
-gem "mail", "~> 2.8"
-gem "nmatrix", git: "https://github.com/b08x/nmatrix.git", branch: "development"
-gem "nmatrix-fftw", git: "https://github.com/b08x/nmatrix.git", branch: "development"
-gem "nmatrix-lapacke", git: "https://github.com/b08x/nmatrix.git", branch: "development"
-gem "pdf-reader", "~> 2.12"
-gem "pdf-textstream", "~> 0.1.0"
-gem "rbplotly", git: "https://github.com/b08x/rbplotly.git", branch: "development"
-gem "redcarpet"
-gem "refinements", "~> 9.8"
+gem 'nmatrix', git: 'https://github.com/b08x/nmatrix.git', branch: 'development'
+gem 'nmatrix-fftw', git: 'https://github.com/b08x/nmatrix.git', branch: 'development'
+gem 'nmatrix-lapacke', git: 'https://github.com/b08x/nmatrix.git', branch: 'development'
+gem 'rbplotly', git: 'https://github.com/b08x/rbplotly.git', branch: 'development'
+
+gem 'beckett'
+gem 'chroma-db'
+gem 'cli-ui'
+gem 'cohere'
+gem 'cohere-ruby'
+gem 'composable_operations'
+gem 'debug_me'
+gem 'decisiontree'
+gem 'docsplit'
+gem 'docx', '~> 0.8.0'
+gem 'dotenv'
+gem 'engtagger'
+gem 'epitome'
+gem 'fasttext'
+gem 'fuzzy_match'
+gem 'fuzzy-string-match'
+gem 'fuzzy_tools'
+gem 'gnuplot'
+gem 'google-cloud-ai_platform-v1'
+gem 'google_drive'
+gem 'google_search_results'
+gem 'graphr'
+gem 'hexapdf'
+gem 'hugging-face'
+gem 'jongleur'
+gem 'langchainrb'
+gem 'lemmatizer'
+gem 'lingua'
+gem 'loofah'
+# gem 'llm_memory'
+gem 'mimemagic'
+gem 'networkx'
+gem 'nokogiri'
+gem 'ohm'
+gem 'ohm-contrib'
+gem 'oj'
+gem 'ollama-ai'
+gem 'openssl'
+gem 'open-uri'
+gem 'optimist'
+gem 'osc-ruby'
+# gem 'pdf_paradise'
+gem 'pdf-reader'
+gem 'pgvector'
+gem 'poppler'
+gem 'pragmatic_segmenter'
+gem 'pragmatic_tokenizer'
+gem 'rdatasets'
+gem 'redic'
+gem 'redis'
+gem 'roo'
+gem 'rover-df'
+gem 'rspec'
+gem 'rubydown'
+gem 'ruby-openai'
+gem 'ruby-spacy'
+gem 'sad_panda'
+gem 'safe_ruby'
+gem 'scalpel'
+gem 'socrates'
+gem 'standard'
+gem 'stream_lines'
+gem 'syntax_tree'
+gem 'tomoto'
+gem 'vega'
+gem 'verbal_expressions'
+gem 'wikipedia-client'
+gem 'wordnet'
+gem 'wordnet-defaultdb'
+
+gem 'distribution'
+gem 'sciruby'
+gem 'treat'
+gem 'zip'
+
+gem 'algorithms'
+gem 'java'
+gem 'linguistics'
+gem 'linkparser'
+gem 'pdf-textstream'
+
+# TODO:
+# source "https://rubygems.pkg.github.com/b08x" do
+#   gem "ferret"
+#   gem "nmatrix"
+#   gem 'nmatrix-lapacke'
+#   gem 'rbplotly'
+# end
+
+# gem "betty", git: "https://github.com/b08x/betty.git", branch: "main"
+# gem 'aoororachain'
+# gem 'google-cloud'
+# gem 'google_palm_api', '>= 0.1.3'
+# gem 'red-arrow', '11.0.0'
+# gem 'red-arrow-numo-narray'
+# gem 'red-chainer'
+# gem 'red-datasets', '>= 0.1.4'
+# gem 'red-datasets-arrow'
+# gem 'red-datasets-daru'
+# gem 'red-datasets-pandas'
+# gem 'red-gandiva', '11.0.0'
+# gem 'red-parquet', '11.0.0'
+# gem 'red-plasma'
+# gem 'red_amber', '0.4.2'
+# gem 'summarize'
+

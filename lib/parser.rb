@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "knowlecule/parsers/ansible"
-require "knowlecule/parsers/git"
-require "knowlecule/parsers/md"
-require "knowlecule/parsers/pdf"
-require "knowlecule/parsers/ruby"
+require "parsers/ansible"
+require "parsers/git"
+require "parsers/md"
+require "parsers/pdf"
+require "parsers/ruby"
 
 
 # A DirectoryLoader points to a path and sets the glob for the files you want to load.

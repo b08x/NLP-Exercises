@@ -4,6 +4,19 @@ IFS=$'\n\t'
 set -vx
 
 which overcommit > /dev/null 2>&1 && overcommit --install
+
+paru -S link-grammar --noconfirm --needed
+
+python -m venv .env
+source .env/bin/activate
+pip install -U pip setuptools wheel
+pip install -U spacy
+#python -m spacy download en_core_web_trf
+#python -m spacy download en_core_web_lg
+
+bundle lock --add-platform x86_64-linux
 bundle install
+
+
 
 # Do any other automated setup that you need to do here

@@ -15,7 +15,7 @@ module Knowlecule
           glob = `fd -t f -a`.split("\n")
           files = Knowlecule::ArrayLib.to_indices_hash(glob)
           Parallel.map(files, progress: "     #{files.count}", in_processes: 3) do |file|
-            add(Item.metadata(file[1]))
+            add(FileObject.metadata(file[1]))
           end
         end
       elsif File.file?(source)
@@ -29,7 +29,7 @@ module Knowlecule
 
     def add(file)
       logger.debug("adding #{file}")
-      Item.create(
+      FileObject.create(
         path: file[:path],
         filename: file[:name],
         extension: file[:extension],

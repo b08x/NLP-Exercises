@@ -40,7 +40,7 @@ require "llm/huggingface"
 require "llm/localai"
 require "llm/ollama"
 
-require "item"
+require "fileobject"
 require "parser"
 require "pipeline"
 

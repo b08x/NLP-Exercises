@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require "composable_operations"
 # require_relative 'pipeline/text/graph'
 require_relative 'pipeline/segment_tokenize'
 require_relative 'pipeline/feature_extraction'

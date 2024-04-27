@@ -5,7 +5,7 @@ require "mimemagic"
 require "ohm"
 require "ohm/contrib"
 
-Knowlecule::UI.say("Connected to Redis Host!")
+
 
 module Knowlecule
   module Redis
@@ -15,14 +15,14 @@ module Knowlecule
       begin
         Ohm.redis = Redic.new(host)
       rescue Ohm::Error => e
-        Knowlecule::UI.say(:error, "Unable to connect to Redis Cache #{e}")
+        puts "Unable to connect to Redis Cache #{e}"
         exit
       end
     end
 
     def flush
       Ohm.redis.call "FLUSHDB"
-      Knowlecule::UI.say("Redis Cache Flushed! host: #{ENV.fetch('REDIS')}")
+      puts "Redis Cache Flushed! host: #{ENV.fetch('REDIS')}"
       exit
     end
   end

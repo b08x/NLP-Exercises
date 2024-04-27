@@ -36,5 +36,5 @@ module Knowlecule
   end
 end
 
-$config = Knowlecule::Config.new.config
+# $config = Knowlecule::Config.new.config
 # $models = $config.fetch(:models)

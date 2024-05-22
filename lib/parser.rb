@@ -6,6 +6,9 @@ require "parsers/git"
 require "parsers/md"
 require "parsers/pdf"
 require "parsers/ruby"
+require "parsers/srt"
+require "parsers/jsonl"
+#require "parsers/gitrepo"
 
 
 # A DirectoryLoader points to a path and sets the glob for the files you want to load.

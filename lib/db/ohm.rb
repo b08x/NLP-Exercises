@@ -14,6 +14,7 @@ module Knowlecule
     def connect(host)
       begin
         Ohm.redis = Redic.new(host)
+        puts "connected to redis host!"
       rescue Ohm::Error => e
         puts "Unable to connect to Redis Cache #{e}"
         exit

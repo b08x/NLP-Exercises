@@ -8,6 +8,7 @@ require "composable_operations"
 require "net/http"
 require "dry/monads"
 
+require 'pathname'
 require "faraday"
 require "hashie"
 require "json"
@@ -33,17 +34,22 @@ require "utils/text/fix_encoding"
 require "db/ohm"
 require "db/postgres"
 
-#Knowlecule::Redis.connect(ENV['REDIS'])
+Knowlecule::Redis.connect(ENV['REDIS'])
 
-require "llm/flowise"
-require "llm/huggingface"
+# require "llm/dify"
+# require "llm/huggingface"
 require "llm/localai"
 require "llm/ollama"
 
-require "fileobject"
+require "item"
 require "parser"
 require "pipeline"
 
 require "loader"
 
+
+case ARGV[0]
+when "parse"
+  puts "heyo"
+end
 

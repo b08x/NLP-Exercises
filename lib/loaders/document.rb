@@ -12,6 +12,8 @@ module Knowlecule
 
 end
 
+# the algorithm gem provides this functionaity 
+# and more!
 
 
 class FileIterator

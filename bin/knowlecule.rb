@@ -50,6 +50,6 @@ require "loader"
 
 case ARGV[0]
 when "parse"
-  puts "heyo"
+  file = Item.new('/home/b08x/Recordings/video/daily_morning_standup.srt')
 end
 

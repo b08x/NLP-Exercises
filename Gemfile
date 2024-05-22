@@ -7,6 +7,8 @@ gem 'irb'
 gem 'iruby', '>= 0.7.4'
 gem 'pycall', '>= 1.5.1'
 
+gem 'rackup'
+gem 'sinatra'
 # gem 'mysql2'
 gem 'subtitle'
 gem 'webvtt-ruby'

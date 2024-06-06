@@ -45,10 +45,9 @@ module Knowlecule
   end
 end
 
-# file = Item.new('/home/b08x/Recordings/video/daily_morning_standup.srt')
+file = Item.new('/home/b08x/Recordings/video/2024-05-24_15-28-43.srt')
+sub = Knowlecule::ParseSubtitle.new(file)
 
-# sub = Knowlecule::ParseSubtitle.new(file)
+ puts sub.srt
 
-# p sub.srt
 
-# puts file.source

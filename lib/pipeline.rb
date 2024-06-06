@@ -2,11 +2,33 @@
 
 # require_relative 'pipeline/text/graph'
 require_relative 'pipeline/segment_tokenize'
-require_relative 'pipeline/feature_extraction'
+# require_relative 'pipeline/feature_extraction'
 require_relative 'pipeline/hypernyms'
 require_relative 'pipeline/ldamodeler'
 
 require 'lingua'
+
+module Text
+  include Logging
+
+  module_function
+
+  def sanatize(text)
+    clean_text = text.gsub(/\r/,' ').gsub(/\n/,' ').gsub(/\s+/,' ')
+    clean_text.gsub!("\t\r ", '')
+    clean_text.gsub!('-­‐', '-')
+    clean_text.gsub!("•", '')
+    clean_text.gsub!("●", '')
+    clean_text.gsub!("\n\n", '#keep#')
+    clean_text.gsub!("\n", ' ')
+    # Fix for an incompatible space character.
+    clean_text.gsub!(" ", ' ')
+    clean_text.gsub!('#keep#', "\n\n")
+    clean_text.gsub!("   ",' ')
+    return clean_text
+  end
+
+end
 
 
 #content = Lingua::EN::Readability.new(text)

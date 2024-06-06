@@ -15,7 +15,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 pip install -U pip setuptools wheel
 pip install -U spacy transformers booknlp
 
-pip install -r 
+pip install -r requirements.txt
 
 # Function to check if a spaCy model is installed
 check_model_installed() {

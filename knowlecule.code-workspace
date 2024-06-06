@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../docker-stacks"
+		},
+		{
+			"path": "../syncopatedOS/betty"
+		},
+		{
+			"path": "../../../../mnt/ninjabot/storage/Archive/Workspace/laudllm-archive"
+		}
+	]
+}

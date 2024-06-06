@@ -20,12 +20,12 @@ module Knowlecule
           punctuation: punct,
           numbers: :all,
           minimum_length: 0,
-          remove_emoji: true,
+          remove_emoji: false,
           remove_emails: true,
           remove_urls: true,
           remove_domains: true,
           expand_contractions: true,
-          clean: false,
+          clean: true,
           mentions: :keep_original,
           hashtags: :keep_original,
           classic_filter: true,
@@ -35,15 +35,11 @@ module Knowlecule
       end
 
       def execute
-        begin
-          text.segment.map do |segment|
-            PragmaticTokenizer::Tokenizer.new(@options).tokenize(segment)
-          end
-        rescue NoMethodError => e
-          p e
-        ensure
-          PragmaticTokenizer::Tokenizer.new(@options).tokenize(text.text)
-        end
+        PragmaticTokenizer::Tokenizer.new(@options).tokenize(text)
+      rescue NoMethodError => e
+        p e
+      ensure
+        PragmaticTokenizer::Tokenizer.new(@options).tokenize(text)
       end
     end
 
@@ -51,17 +47,16 @@ module Knowlecule
       processes :text
 
       def execute
-        PragmaticSegmenter::Segmenter.new(text: text)
+        PragmaticSegmenter::Segmenter.new(text:).segment
       end
     end
 
     class Chunker < ComposableOperations::ComposedOperation
-      use Segmenter
+      # use Segmenter
       # use Tokenizer, punct: :none, stopwords: true
       use Tokenizer
     end
   end
 end
 
-
-#TODO: syllables
+# TODO: syllables

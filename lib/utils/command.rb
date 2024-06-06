@@ -10,8 +10,8 @@ module Knowlecule
     module Command
       module_function
 
-      def run(command=[])
-        pid, stdin, stdout, stderr = Open4::popen4(command)
+      def run(command = [])
+        pid, stdin, stdout, stderr = Open4.popen4(command)
         stdout_data = stdout.gets
         stdout.close
         stderr_data = stderr.gets
@@ -31,7 +31,6 @@ module Knowlecule
 
         [stdout_data, stderr_data, exit_code]
       end
-
     end
   end
 end
@@ -41,9 +40,10 @@ def parse_output(data)
   parsed_text = data.split(delimiter).last.strip
 
   return nil if parsed_text.nil?
-  #JSON.parse(parsed_text)
-  puts "#{parsed_text}"
-#  return parsed_text.class
+
+  # JSON.parse(parsed_text)
+  # puts "#{parsed_text}"
+  parsed_text
 end
 
 def notebook(path)
@@ -54,14 +54,14 @@ def notebook(path)
 
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logging.getLogger().addHandler(logging.StreamHandler(stream=sys.stdout))
-    
+
     from llama_index.readers.obsidian import ObsidianReader
 
     documents = ObsidianReader(
       "#{path}"
     ).load_data()
-    
-    print(documents[4])
+
+    print(documents)
   PYTHON
 
   stdout_data, stderr_data, exit_code = Knowlecule::Util::Command.run_system(command)
@@ -73,10 +73,17 @@ def notebook(path)
   end
 
   # logger.debug("documents loaded")
-  parse_output(stdout_data)
-  
+  begin
+    parsed_documents = JSON.parse(stdout_data)
+    return { status: 'success', message: 'Documents loaded successfully', data: parsed_documents }
+  rescue JSON::ParserError => e
+    puts "Failed to parse documents: #{e.message}"
+    return { status: 'error', message: "Failed to parse documents: #{e.message}", data: nil }
+  end
 end
 
-path = File.join(ENV["HOME"], "Workspace", "syncopatedNotes", "website", "_notes")
+# path = File.join(ENV['HOME'], 'Workspace', 'Notebook')
 
-notebook(path)
+# notes = notebook(path)
+
+# p notes

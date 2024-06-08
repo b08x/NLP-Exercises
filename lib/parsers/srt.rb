@@ -24,6 +24,7 @@ module Knowlecule
     end
 
     def webvtt
+      @vtt = WebVTT::File.new("#{@path.cleanpath}")
       @vtt.cues.each do |cue|
         @text += "#{cue.text}\n"
       end
@@ -45,9 +46,7 @@ module Knowlecule
   end
 end
 
-file = Item.new('/home/b08x/Recordings/video/2024-05-24_15-28-43.srt')
+file = Item.new('/tmp/syncopated.en.vtt')
 sub = Knowlecule::ParseSubtitle.new(file)
 
- puts sub.srt
-
-
+p sub.webvtt

@@ -56,8 +56,17 @@ require "pipeline"
 require "loader"
 
 
+source = ARGV[1]
+
+file = Item.new(File.new(source))
+
 case ARGV[0]
-when "parse"
-  file = Item.new('/home/b08x/Recordings/video/daily_morning_standup.srt')
+
+when "subs"
+  sub = Knowlecule::ParseSubtitle.new(file)
+  puts sub.webvtt
+when "jsonl"
+  chat = Knowlecule::ParseJsonl.new(file)
+  puts chat.jsonl
 end
 

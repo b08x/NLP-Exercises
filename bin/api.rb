@@ -79,7 +79,7 @@ post '/tag' do
   end
 end
 
-# Define a route for handling POST requests with text data
+# # Define a route for handling POST requests with text data
 post '/summary' do
   content_type :json
 
@@ -105,6 +105,64 @@ post '/summary' do
     halt 404, { message: 'Error during tokenizing' }.to_json
   end
 end
+
+post '/transcript' do
+  content_type :json
+
+  begin
+    data = JSON.parse(request.body.read.to_json)
+
+    # Check if the input is a YouTube link
+    if data.is_a?(String) && data.start_with?('https://www.youtube.com/watch?v=')
+      # Extract the video ID from the URL
+      video_id = data.split('v=').last
+
+      # Download the subtitles using youtube-dl
+      subtitles_file = `youtube-dl --skip-download --write-sub --sub-lang en --sub-format txt #{video_id}`
+
+      # Read the subtitles from the file
+      subtitles = File.read(subtitles_file)
+
+      # Remove the temporary subtitles file
+      File.delete(subtitles_file)
+
+      # Process the subtitles text
+      sections = Lingua::EN::Readability.new(subtitles)
+
+      results = []
+
+      sections.sentences.each do |sentence|
+        chunked = Knowlecule::Pipeline::Chunker.new(sentence).perform
+        content, topics = "#{chunked}".summarize(ratio: 75)
+        results << JSON.parse(content)
+      end
+
+      p Lingua::EN::Readability.new(results.join(' ')).report
+
+      results.join(' ').to_json
+    else
+      # If the input is not a YouTube link, proceed with the existing summarization logic
+      sanitized_text = Text.sanatize(data)
+      sections = Lingua::EN::Readability.new(sanitized_text)
+
+      results = []
+
+      sections.sentences.each do |sentence|
+        chunked = Knowlecule::Pipeline::Chunker.new(sentence).perform
+        content, topics = "#{chunked}".summarize(ratio: 75)
+        results << JSON.parse(content)
+      end
+
+      p Lingua::EN::Readability.new(results.join(' ')).report
+
+      results.join(' ').to_json
+    end
+  rescue StandardError => e
+    logger.error "Error during tokenizing: #{e.message}"
+    halt 404, { message: 'Error during tokenizing' }.to_json
+  end
+end
+
 
 # uniq_words = {}
 # uniq_words[:words] = []

@@ -2,25 +2,29 @@
 # frozen_string_literal: true
 
 module Knowlecule
+  module ParseJSONL
+    module_function
 
-  class ParseJSONL
-    attr_reader :file_path, :file_content
-    attr_accessor :parsed
-
-    def initialize(file_path)
-      @file_path = Pathname.new(file_path).cleanpath.to_s
-      @file_content = File.read(@file_path)
-      parse
+    def parse(file)
+      File.open(file, 'r') do |f|
+        f.each_line do |line|
+          extracted_data = extract_data(line)
+          puts extracted_data
+          puts "\n"
+        end
+      end
     end
 
-    def parse
-      @parsed = JSONL.parse(@file_content)
+    def extract_data(jsonl_entry)
+      data = JSON.parse(jsonl_entry)
+      {
+        'name' => data['name'],
+        'send_date' => data['send_date'],
+        'mes' => data['mes']
+      }
     end
-
   end
-
 end
-
 
 # chatlog = File.join("/home/b08x/Workspace/Characters/config/chats/Steve Tomotolier/Steve Tomotolier - 2024-5-18@04h36m41s.jsonl")
 # output = Knowlecule::ParseJSONL.new(chatlog)

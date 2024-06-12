@@ -1,4 +1,4 @@
-version: '3.1'
+version: "3.1"
 
 services:
   flowise:
@@ -16,8 +16,8 @@ services:
     ports:
       - "3002:3002"
     volumes:
-        - ./data/flowise:/root/.flowise
-        - ./data/flowise/output:/data/output
+      - ./data/flowise:/root/.flowise
+      - ./data/flowise/output:/data/output
     command: /bin/sh -c "sleep 3; flowise start"
     # networks:
     #   network:
@@ -31,7 +31,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:postgres@ninjabot.syncopated.net:5432/postgres
+      - DATABASE_URL=postgresql://postgres:postgres@tinybot.syncopated.net:5432/postgres
       - NEXTAUTH_SECRET=mysecret
       - SALT=mysalt
       - NEXTAUTH_URL=http://localhost:3000

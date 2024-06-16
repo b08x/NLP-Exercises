@@ -197,8 +197,6 @@ gem 'pdf-textstream'
 # gem 'red_amber', '0.4.2'
 # gem 'summarize'
 
+gem 'jbuilder', '~> 2.12'
 
-gem "jbuilder", "~> 2.12"
-
-
-gem "summarize", "~> 1.0"
+gem 'summarize', '~> 1.0'

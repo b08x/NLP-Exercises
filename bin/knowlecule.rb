@@ -56,7 +56,9 @@ require "pipeline"
 require "loader"
 
 
-source = ARGV[1]
+unless ARGV[0].nil?
+
+  source = ARGV[1]
 
 file = Item.new(File.new(source))
 
@@ -64,9 +66,10 @@ case ARGV[0]
 
 when "subs"
   sub = Knowlecule::ParseSubtitle.new(file)
-  puts sub.webvtt
+  puts sub.convert
 when "jsonl"
-  chat = Knowlecule::ParseJsonl.new(file)
+  chat = Knowlecule::ParseJSONL.parse(file)
   puts chat.jsonl
 end
 
+end

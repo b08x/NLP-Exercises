@@ -125,7 +125,7 @@ end
 
 source = File.join(ENV["HOME"], "Recordings")
 
-json_file = File.join(source, "textv21.json" )
+json_file = File.join(source, "staging/test002_condensing_task_instructions_for_text_classification/2024-05-22_03-22-03.json")
 
 transcription = TranscriptionParser.parse_transcription(json_file)
 

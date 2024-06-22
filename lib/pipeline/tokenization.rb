@@ -15,8 +15,8 @@ class Tokenizer
 
   def self.tokenize(text)
     options = {
-      remove_stop_words: stopwords,
-      punctuation: punct,
+      # remove_stop_words: stopwords,
+      # punctuation: punct,
       numbers: :all,
       minimum_length: 0,
       remove_emoji: false,

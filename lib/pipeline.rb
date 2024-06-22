@@ -2,6 +2,7 @@
 
 require_relative 'deepgram/deepgram'
 require_relative 'pipeline/segmentation'
+require_relative 'pipeline/tokenization'
 require_relative 'pipeline/tagging'
 require_relative 'pipeline/modeler'
 require_relative 'pipeline/hypernyms'
@@ -12,17 +13,22 @@ longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_
 @text = Deepgram.new(longtext.path)
 @text.parse_json
 
-# @tt = []
-# @text.paragraphs.each do |para|
-#    @tt << Tokenizer.tokenize(para)
-# end
-
 @extractor = SpacyFeatureExtractor.new
+@tt = []
+
+puts Segmenter.segment(@text.transcript).words
+
+puts "------\n"
 
 @text.paragraphs.each do |para|
-  puts @extractor.sentences_to_json(para)
+  @tt << Tokenizer.tokenize(para)
+  # p tt.join(" ").strip.chomp
+  #puts @extractor.sentences_to_json(para)
 end
 
+@tt.each do |t|
+  p t.join(" ")
+end
 
 
 # puts @nerds

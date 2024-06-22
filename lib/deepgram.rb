@@ -8,19 +8,28 @@ module DeepGram
 end
 
 
-# just the transcript
-cat 2024-05-22_03-22-03-deepgram.json|jq .results.channels[].alternatives[].transcript
+# the transcript in paragraph form
+cat $file|jq .results.channels[].alternatives[].paragraphs.transcript
 
+# one long string
+cat $file|jq .results.channels[].alternatives[].transcript
 
-# to list words, and their start and end times, etc:
-╰$ cat 2024-05-22_03-22-03-deepgram.json|jq .results.channels[].alternatives[].words[]
+# # a list of unique intents
+cat $file|jq .results.intents.segments[].intents[].intent|uniq
+# a list of unique topics
+cat $file|jq .results.topics.segments[].topics[].topic|uniq
 
+# return each word with confidence score
+cat $file | jq '.results.channels[].alternatives[].words[] | { word, confidence }'
 
-╰$ cat 2024-05-22_03-22-03-deepgram.json|jq .results.topics.segments[].topics[].topic
+# return a hash list of each segmented sentence
+cat $file | jq '.results.channels[].alternatives[].paragraphs.paragraphs[].sentences[] | { text }'
 
-╰$ cat 2024-05-22_03-22-03-deepgram.json|jq .results.topics.segments[].text
+# returns a hash list of paragraphs as an array of setences
+cat $file | jq '.results.channels[].alternatives[].paragraphs.paragraphs[] | { paragraph: [.sentences[].text] }'
 
+# segments with their labled categories|topics
+cat $file | jq '.results.topics.segments[] | { text, topics: [.topics[] | { topic: .topic }] }'
 
-╰$ cat 2024-05-22_03-22-03-deepgram.json|jq .results.intents.segments[].text
-
-╰$ cat 2024-05-22_03-22-03-deepgram.json|jq .results.intents.segments[].intents[].intent
+# segments with their labled intents
+cat $file | jq '.results.intents.segments[] | { text, intents: [.intents[] | { intent: .intent }] }'

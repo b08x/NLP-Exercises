@@ -4,7 +4,7 @@
 require_relative 'pipeline/segment_tokenize'
 # require_relative 'pipeline/feature_extraction'
 require_relative 'pipeline/hypernyms'
-require_relative 'pipeline/ldamodeler'
+require_relative 'pipeline/lda@modeler'
 
 require 'lingua'
 
@@ -52,8 +52,102 @@ end
 #   end
 # end
 
+require 'linguistics'
+require 'pragmatic_tokenizer'
+require 'tomoto'
+
+module Punctuation
+  def punctuate(text)
+    raise NotImplementedError
+  end
+end
+
+class Punctuator
+  include Punctuation
+
+  include Linguistics::EN
+
+  attr_accessor :text
+
+  def initialize(text)
+    @text = text
+  end
+
+  # def punctuate(text)
+  # end
+end
+
+module Segmentation
+  def segment(text)
+    raise NotImplementedError
+  end
+end
+
+class Segmenter
+  include Segmentation
+
+  def self.segment(text)
+    content = Lingua::EN::Readability.new(text)
+    content
+  end
+end
 
 
+
+
+module Tokenization
+  def tokenize(text)
+    raise NotImplementedError
+  end
+end
+
+class Tokenizer
+  include Tokenization
+
+  def self.tokenize(text)
+    tokenizer = PragmaticTokenizer::Tokenizer.new
+    tokenizer.tokenize(text)
+  end
+end
+
+
+
+
+
+
+module TopicModeling
+  def generate_topics(tokens)
+    raise NotImplementedError
+  end
+end
+
+class Modeler
+  include TopicModeling
+
+  attr_accessor :model, :save_path
+
+  def initialize(save_path)
+    @model = Tomoto::LDA.new(k: 10, alpha: 0.1, eta: 0.01, min_cf: 0.1, rm_top: 4, seed: 42)
+    @save_path = Pathname.new(save_path).cleanpath
+  end
+
+  def generate_topics(tokens)
+    @model.add_doc(tokens)
+    @model.train(0)
+    puts "Num docs: #{@model.num_docs}, Vocab size: #{@model.used_vocabs.length}, Num words: #{@model.num_words}"
+    puts "Removed top words: #{@model.removed_top_words}"
+    puts "Training..."
+    100.times do |i|
+      @model.train(10)
+      puts "Iteration: #{i * 10}\tLog-likelihood: #{@model.ll_per_word}"
+    end
+
+    puts @model.summary
+    puts "Saving..."
+    @model.save(save_path)
+
+  end
+end
 
 
 

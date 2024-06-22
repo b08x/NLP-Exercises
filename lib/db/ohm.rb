@@ -38,18 +38,6 @@ class Subject < Ohm::Model
   index :name
 end
 
-class Content < Ohm::Model
-  attribute :name
-  attribute :description
-  # attribute :vector
-
-  collection :items, :Item
-  collection :documents, :Document
-  # collection :sections, :Sections
-
-  unique :name
-  index :name
-end
 
 # Within a section, you typically find a cohesive group of related content that is organized around a common theme or topic. Sections are commonly used in documents, articles, or books to structure and organize information. They often contain headings, subheadings, paragraphs, lists, tables, or other elements that help to present and explain the context within that section as well as the document as a whole.
 

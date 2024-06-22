@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative 'linguistics'
-
+require 'linguistics'
 
 module Punctuation
   def punctuate(text)

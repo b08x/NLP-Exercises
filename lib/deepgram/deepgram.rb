@@ -58,3 +58,43 @@ end
 # Example usage with a file
 # deepgram_output = DeepGram.process_deepgram_file('audio.wav')
 # puts deepgram_output
+
+
+
+
+# ---
+
+#  # return each word with confidence score
+#  def words_with_confidence(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].words[] | { word, confidence }'`
+#     .split("\n")
+#     .map { |word_data| eval(word_data) } # Use eval to parse the string into a hash
+# end
+
+# # return a hash list of each segmented sentence
+# def segmented_sentences(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].paragraphs.paragraphs[].sentences[] | { text }'`
+#     .split("\n")
+#     .map { |sentence_data| eval(sentence_data) } # Use eval to parse the string into a hash
+# end
+
+# # returns a hash list of paragraphs as an array of setences
+# def paragraphs_as_sentences(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].paragraphs.paragraphs[] | { paragraph: [.sentences[].text] }'`
+#     .split("\n")
+#     .map { |paragraph_data| eval(paragraph_data) } # Use eval to parse the string into a hash
+# end
+
+# # segments with their labled categories|topics
+# def segments_with_topics(file)
+#   `cat #{file} | jq -r '.results.topics.segments[] | { text, topics: [.topics[] | { topic: .topic }] }'`
+#     .split("\n")
+#     .map { |segment_data| eval(segment_data) } # Use eval to parse the string into a hash
+# end
+
+# # segments with their labled intents
+# def segments_with_intents(file)
+#   `cat #{file} | jq -r '.results.intents.segments[] | { text, intents: [.intents[] | { intent: .intent }] }'`
+#     .split("\n")
+#     .map { |segment_data| eval(segment_data) } # Use eval to parse the string into a hash
+# end

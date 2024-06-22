@@ -1,9 +1,27 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-class Item
+class Item < Ohm::Model
+  include Logging
+
+  extend Dry::Monads[:maybe]
+
+  include Ohm::Callbacks
+
+  attribute :path
+  attribute :name
+  attribute :extension
+  attribute :type
+  attribute :ctime
+  attribute :mtime
+
+  index :path
+  index :name
+  index :extension
+  index :type
+
   attr_reader :path, :extension, :name, :type, :ctime, :mtime, :media_type
-  
+
 
   def initialize(source)
     @path = Pathname.new(source).cleanpath.to_s
@@ -25,7 +43,7 @@ class Item
   rescue NoMethodError
     MimeMagic.by_path(File.open(@path)).type
   end
-  
+
   def determine_media_type
     case @type
     when /text/

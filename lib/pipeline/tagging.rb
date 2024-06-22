@@ -20,17 +20,17 @@ class SpacyFeatureExtractor
   end
 
   def dependencies(text)
-    @deps = text.tokens.map do |token|
+    doc = @nlp.read(text)
+    @deps = doc.tokens.map do |token|
       [token.text, { lemma: token.lemma, pos: token.pos.upcase.to_sym, tag: token.tag.upcase, dep: token.dep }]
     end.to_h
   end
 
   def ners(text)
     doc = @nlp.read(text)
-    doc.ents.each do |ent|
-      @deps[ent.text][:ner] = ent.label_
-    end
-    return @deps
+    @deps = doc.ents.map do |ent|
+      [ent.text, { label: ent.label }]
+    end.to_h
   end
 
   def merge_ners_with_dependencies(text)

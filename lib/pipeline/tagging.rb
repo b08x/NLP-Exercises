@@ -3,6 +3,7 @@
 
 require 'ruby-spacy'
 
+include Logging
 
 module Tagging
   def grammars(text)
@@ -13,45 +14,24 @@ end
 class SpacyFeatureExtractor
   include Tagging
 
-  attr_accessor :nlp, :spacy, :deps, :ners
+  attr_accessor :nlp, :spacy, :deps, :ners, :sentences
 
   def initialize
     @nlp = Spacy::Language.new('en_core_web_trf')
   end
 
-  def dependencies(text)
-    doc = @nlp.read(text)
-    @deps = doc.tokens.map do |token|
-      [token.text, { lemma: token.lemma, pos: token.pos.upcase.to_sym, tag: token.tag.upcase, dep: token.dep }]
-    end.to_h
-  end
+  def sentences_to_json(paragraphs)
+      doc = @nlp.read(paragraphs)
 
-  def ners(text)
-    doc = @nlp.read(text)
-    @deps = doc.ents.map do |ent|
-      [ent.text, { label: ent.label }]
-    end.to_h
-  end
-
-  def merge_ners_with_dependencies(text)
-    @deps = dependencies(text)
-    ners(text)
-    @deps
-  end
-
-  def sentences_to_json
-    @sentences.each do |token, attributes|
-      doc = @nlp.read(token)
-
-      sentences = doc.sents.map do |sentence|
+      @sentences = doc.sents.map do |sentence|
         {
           text: sentence.text,
           pos_tags: sentence.tokens.map { |t| "#{t.text} (#{t.pos_})" }.join(', '),
+          label: sentence.ents.map { |e| "#{e.text} (#{e.label_})" }.join(', '),
           simplified_structure: extract_simplified_structure(sentence)
         }
       end
-      return sentences.to_json
-    end
+      return @sentences.to_json
   end
 
   private

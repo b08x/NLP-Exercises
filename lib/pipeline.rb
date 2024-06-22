@@ -19,20 +19,16 @@ longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_
 
 @extractor = SpacyFeatureExtractor.new
 
-@things = []
-@nerds = []
-
-@text.paragraphs[0..3].each do |para|
-  @things << @extractor.dependencies(para)
-  @nerds << @extractor.ners(para)
+@text.paragraphs.each do |para|
+  puts @extractor.sentences_to_json(para)
 end
 
-puts @things
-puts "------\n"
-puts @nerds
+
+
+# puts @nerds
 puts "------\n"
 
-puts @extractor.deps
+# puts @extractor.deps
 #
 # module Text
 #   include Logging

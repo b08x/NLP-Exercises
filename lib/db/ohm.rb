@@ -11,7 +11,7 @@ module Knowlecule
 
     def connect(host)
       Ohm.redis = Redic.new(host)
-      # puts 'connected to redis host!'
+      puts 'connected to redis host!'
     rescue Ohm::Error => e
       puts "Unable to connect to Redis Cache #{e}"
       exit
@@ -24,8 +24,6 @@ module Knowlecule
     end
   end
 end
-
-
 
 class Subject < Ohm::Model
   attribute :name
@@ -49,7 +47,7 @@ class Section < Ohm::Model
   attribute :uuid
 
   # Character position within the source item
-  attribute :start_position 
+  attribute :start_position
   attribute :end_position
 
   attribute :content

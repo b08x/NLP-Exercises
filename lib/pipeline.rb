@@ -4,7 +4,7 @@
 require_relative 'pipeline/segment_tokenize'
 # require_relative 'pipeline/feature_extraction'
 require_relative 'pipeline/hypernyms'
-require_relative 'pipeline/lda@modeler'
+require_relative 'pipeline/ldamodeler'
 
 require 'lingua'
 
@@ -65,7 +65,7 @@ end
 class Punctuator
   include Punctuation
 
-  include Linguistics::EN
+  include Linguistics
 
   attr_accessor :text
 

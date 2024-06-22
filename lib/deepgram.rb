@@ -1,51 +1,66 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'pragmatic_tokenizer'
+require 'tomoto'
+require 'composable_operations'
+require 'json'
+require 'open3'
+
 module DeepGram
   module_function
 
-  # the transcript in paragraph form
-  def transcript_paragraphs(file)
-    `cat #{file} | jq .results.channels[].alternatives[].paragraphs.transcript`
+  class DeepgramProcessor < ComposableOperations::Operation
+    processes :json_data
+
+    property :json_data, required: true
+
+    before do
+      @transcript = []
+    end
+    def execute
+      # Extract the transcript from the JSON data
+      @transcript << json_data[:json_data]['results']['channels'][0]['alternatives'][0]['paragraphs']
+      # Return the transcript
+      @transcript.map! { |paragraph| paragraph['transcript'].strip }
+      return @transcript
+    end
   end
 
-  # one long string
-  def transcript_string(file)
-    `cat #{file} | jq .results.channels[].alternatives[].transcript`
+
+  class DeepgramTopics < ComposableOperations::ComposedOperation
+    use DeepgramProcessor
   end
 
-  # a list of unique intents
-  def unique_intents(file)
-    `cat #{file} | jq .results.intents.segments[].intents[].intent | uniq`
+  def process_deepgram_json(file)
+    json_data = JSON.parse(File.read(file))
+    DeepgramTopics.new(json_data: json_data).perform
   end
 
-  # a list of unique topics
-  def unique_topics(file)
-    `cat #{file} | jq .results.topics.segments[].topics[].topic | uniq`
-  end
-
-  # return each word with confidence score
-  def words_with_confidence(file)
-    `cat #{file} | jq '.results.channels[].alternatives[].words[] | { word, confidence }'`
-  end
-
-  # return a hash list of each segmented sentence
-  def segmented_sentences(file)
-    `cat #{file} | jq '.results.channels[].alternatives[].paragraphs.paragraphs[].sentences[] | { text }'`
-  end
-
-  # returns a hash list of paragraphs as an array of setences
-  def paragraphs_as_sentences(file)
-    `cat #{file} | jq '.results.channels[].alternatives[].paragraphs.paragraphs[] | { paragraph: [.sentences[].text] }'`
-  end
-
-  # segments with their labled categories|topics
-  def segments_with_topics(file)
-    `cat #{file} | jq '.results.topics.segments[] | { text, topics: [.topics[] | { topic: .topic }] }'`
-  end
-
-  # segments with their labled intents
-  def segments_with_intents(file)
-    `cat #{file} | jq '.results.intents.segments[] | { text, intents: [.intents[] | { intent: .intent }] }'`
+  def process_deepgram_file(file)
+    # Use Open3 to capture the output of the command
+    stdout, stderr, status = Open3.capture3("deepgram transcribe --url #{file}")
+    # Check if the command was successful
+    if status.success?
+      # Parse the JSON output
+      json_data = JSON.parse(stdout)
+      # Process the JSON data
+      process_deepgram_json(json_data)
+    else
+      # Handle the error
+      puts "Error transcribing file: #{stderr}"
+    end
   end
 end
+
+# Example usage
+# Assuming you have a Deepgram JSON file named "deepgram_output.json"
+deepgram_output = DeepGram.process_deepgram_json(Pathname.new(ARGV[0].cleanpath.to_s))
+deepgram_output.each do |paragraph|
+  puts paragraph
+end
+
+
+# Example usage with a file
+# deepgram_output = DeepGram.process_deepgram_file('audio.wav')
+# puts deepgram_output

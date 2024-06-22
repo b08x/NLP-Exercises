@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 class Item
-  attr_reader :path, :extension, :name, :type, :ctime, :mtime
+  attr_reader :path, :extension, :name, :type, :ctime, :mtime, :media_type
   
 
   def initialize(source)
@@ -12,7 +12,7 @@ class Item
     @type = mime
     @ctime = File.stat(source).ctime
     @mtime = File.stat(source).mtime
-    @stats
+    @media_type = determine_media_type
   end
 
   private
@@ -24,5 +24,18 @@ class Item
     mime&.type # unless mime.nil?
   rescue NoMethodError
     MimeMagic.by_path(File.open(@path)).type
+  end
+  
+  def determine_media_type
+    case @type
+    when /text/
+      :textual
+    when /audio/
+      :audio
+    when /video/
+      :video
+    else
+      :other
+    end
   end
 end

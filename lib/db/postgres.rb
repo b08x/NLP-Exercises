@@ -10,7 +10,7 @@ include Logging
 logger.debug("Connecting to postgresql database")
 
 module Knowlecule
-  module PG
+  class PG
 
     attr_accessor :db
 
@@ -31,11 +31,11 @@ module Knowlecule
         logger.fatal e.to_s
       end
 
-
-
     end
   end
 end
+
+@db = Knowlecule::PG.new.db
 
 logger.debug("Creating tables if they don't already exist")
 
@@ -49,7 +49,7 @@ begin
     column :size, Integer
     column :mtime, Integer
     column :ctime, Integer
-    index %i[path filename extension mimetype] # %i creates an array of symbols
+    index %i[path filename extension type] # %i creates an array of symbols
   end
 
   @db.create_table? :subjects do

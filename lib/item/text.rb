@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-class Document < Ohm::Model
+class Text < Ohm::Model
   include Logging
 
   extend Dry::Monads[:maybe]
@@ -31,11 +31,11 @@ class Document < Ohm::Model
   # end
 
   def self.call(path:)
-    result = find_document(path)
+    result = find_text(path)
   end
 
-  def self.find_document(path)
-    Maybe(Document.find(path: path).first).to_result(:document_not_found)
+  def self.find_text(path)
+    Maybe(Text.find(path: path).first).to_result(:text_not_found)
   end
 
   # def extract_text(path, type)

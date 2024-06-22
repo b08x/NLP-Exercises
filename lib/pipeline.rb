@@ -55,118 +55,134 @@ end
 require 'linguistics'
 require 'pragmatic_tokenizer'
 require 'tomoto'
+require 'ruby-spacy'
 
-module Punctuation
-  def punctuate(text)
+
+
+
+
+
+
+
+
+module DeepGramParsing
+  def parse_json(file)
     raise NotImplementedError
   end
 end
 
-class Punctuator
-  include Punctuation
+class Deepgram
+  include DeepGramParsing
 
-  include Linguistics
+  attr_accessor :transcript, :paragraphs, :intents, :topics
 
-  attr_accessor :text
-
-  def initialize(text)
-    @text = text
+  def initialize(file)
+    @json_data = JSON.parse(File.read(file))
+    @paragraphs = []
+    @intents = []
+    @topics = []
   end
 
-  # def punctuate(text)
-  # end
-end
-
-module Segmentation
-  def segment(text)
-    raise NotImplementedError
+  def parse_json
+    transcript
+    paragraphs
+    topics
+    intents
   end
-end
 
-class Segmenter
-  include Segmentation
-
-  def self.segment(text)
-    content = Lingua::EN::Readability.new(text)
-    content
+  def transcript
+    @transcript = @json_data["results"]["channels"][0]['alternatives'][0]['transcript']
   end
-end
 
-
-
-
-module Tokenization
-  def tokenize(text)
-    raise NotImplementedError
+  def paragraphs
+    @paragraphs = @json_data["results"]["channels"][0]['alternatives'][0]['paragraphs']['transcript'].strip.split("\n\n")
   end
-end
 
-class Tokenizer
-  include Tokenization
-
-  def self.tokenize(text)
-    tokenizer = PragmaticTokenizer::Tokenizer.new
-    tokenizer.tokenize(text)
+  def topics
+    @json_data["results"]["topics"]["segments"].each {|seg| @topics << seg["topics"][0]["topic"] }
+    @topics.uniq!
   end
+
+  def intents
+    @json_data["results"]["intents"]["segments"].each {|seg| @intents << seg["intents"][0]["intent"] }
+    @intents.uniq!
+  end
+
 end
 
 
 
+longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_deepgram.json')
 
+@text = Deepgram.new(longtext.path)
+@text.parse_json
 
-
-module TopicModeling
-  def generate_topics(tokens)
-    raise NotImplementedError
-  end
-end
-
-class Modeler
-  include TopicModeling
-
-  attr_accessor :model, :save_path
-
-  def initialize(save_path)
-    @model = Tomoto::LDA.new(k: 10, alpha: 0.1, eta: 0.01, min_cf: 0.1, rm_top: 4, seed: 42)
-    @save_path = Pathname.new(save_path).cleanpath
-  end
-
-  def generate_topics(tokens)
-    @model.add_doc(tokens)
-    @model.train(0)
-    puts "Num docs: #{@model.num_docs}, Vocab size: #{@model.used_vocabs.length}, Num words: #{@model.num_words}"
-    puts "Removed top words: #{@model.removed_top_words}"
-    puts "Training..."
-    100.times do |i|
-      @model.train(10)
-      puts "Iteration: #{i * 10}\tLog-likelihood: #{@model.ll_per_word}"
-    end
-
-    puts @model.summary
-    puts "Saving..."
-    @model.save(save_path)
-
-  end
-end
-
-
-
-#
-#
-#
-# class Topic < ComposableOperations::ComposedOperation
-#   use Modeler
+# @tt = []
+# @text.paragraphs.each do |para|
+#    @tt << Tokenizer.tokenize(para)
 # end
-#
-# topics = Topic.perform(tokenized_sentences)
-#
-# p topics
 
-# seg = Knowlecule::Pipeline::Segmenter.new(content.paragraphs).perform
+@extractor = SpacyFeatureExtractor.new
+
+@things = []
+
+@text.paragraphs[0..3].each do |para|
+  @things << @extractor.dependencies(para)
+end
+
+p @things
 #
-# seg.segment.each do |t|
-#   tokenize = Knowlecule::Pipeline::Tokenizer.new(t).perform
-#   p tokenize
-#   puts "-------"
-#   puts "\n"
+#
+# exit
+
+# modeler = Modeler.new(Dir.pwd)
+#
+# @tt.each do |tokens|
+#   modeler.add(tokens)
+# end
+# modeler.train
+# modeler.summary
+#
+# puts modeler.model.topic_words
+#
+#
+
+
+
+
+# ---
+
+#  # return each word with confidence score
+#  def words_with_confidence(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].words[] | { word, confidence }'`
+#     .split("\n")
+#     .map { |word_data| eval(word_data) } # Use eval to parse the string into a hash
+# end
+
+# # return a hash list of each segmented sentence
+# def segmented_sentences(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].paragraphs.paragraphs[].sentences[] | { text }'`
+#     .split("\n")
+#     .map { |sentence_data| eval(sentence_data) } # Use eval to parse the string into a hash
+# end
+
+# # returns a hash list of paragraphs as an array of setences
+# def paragraphs_as_sentences(file)
+#   `cat #{file} | jq -r '.results.channels[].alternatives[].paragraphs.paragraphs[] | { paragraph: [.sentences[].text] }'`
+#     .split("\n")
+#     .map { |paragraph_data| eval(paragraph_data) } # Use eval to parse the string into a hash
+# end
+
+# # segments with their labled categories|topics
+# def segments_with_topics(file)
+#   `cat #{file} | jq -r '.results.topics.segments[] | { text, topics: [.topics[] | { topic: .topic }] }'`
+#     .split("\n")
+#     .map { |segment_data| eval(segment_data) } # Use eval to parse the string into a hash
+# end
+
+# # segments with their labled intents
+# def segments_with_intents(file)
+#   `cat #{file} | jq -r '.results.intents.segments[] | { text, intents: [.intents[] | { intent: .intent }] }'`
+#     .split("\n")
+#     .map { |segment_data| eval(segment_data) } # Use eval to parse the string into a hash
 # end

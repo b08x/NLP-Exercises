@@ -32,15 +32,29 @@ module Knowlecule
       end
 
     end
+
+    # Function to drop the database/tables if a condition is true
+    def drop_database
+      logger.debug("Dropping database and tables")
+      begin
+        @db.drop_table?(:items)
+        @db.drop_table?(:documents)
+        @db.drop_table?(:audiofiles)
+        @db.disconnect
+        logger.debug("Database and tables dropped successfully")
+      rescue StandardError => e
+        logger.fatal e.to_s
+      end
+    end
   end
 end
 
-@db = Knowlecule::PG.new.db
+DB = Knowlecule::PG.new.db
 
 logger.debug("Creating tables if they don't already exist")
 
 begin
-  @db.create_table? (:items) do
+  DB.create_table? (:items) do
     primary_key :id, type: :Bignum
     column :path, String, unique: true
     column :filename, String
@@ -52,64 +66,30 @@ begin
     index %i[path filename extension type] # %i creates an array of symbols
   end
 
-  @db.create_table? :subjects do
-    primary_key :id, type: :Bignum
-    column :name, String
-    column :description, :text
-    column :embedding, "vector(1536)"
-    index :name, unique: true
-  end
-
-  @db.create_table?(:documents) do
+  DB.create_table?(:documents) do
     primary_key :id, type: :Bignum
     column :title, String
     column :content, String
     jsonb :metadata
     column :embedding, "vector(1536)"
 
-    foreign_key :topic_id, :topics
+    foreign_key :item_id, :items
     full_text_index :content
     index %i[metadata embedding]
   end
 
-  @db.create_table?(:audiofiles) do
+  DB.create_table?(:audiofiles) do
     primary_key :id, type: :Bignum
     column :title, String
     column :content, String
     jsonb :metadata
     column :embedding, "vector(1536)"
 
-    foreign_key :topic_id, :topics
+    foreign_key :item_id, :items
     full_text_index :content
     index %i[metadata embedding]
   end
 
-  @db.create_table?(:sections) do
-    primary_key :id, type: :Bignum
-    column :text, String
-    jsonb :tokenized_text
-    jsonb :sanitized_text
-    foreign_key :document_id, :documents
-    index %i[text document_id]
-  end
-
-  @db.create_table?(:words) do
-    primary_key :id, type: :Bignum
-    column :word, String
-    column :synsets, "json"
-    column :part_of_speech, String
-    column :named_entity, String
-    foreign_key :chunk_id, :parts
-    index %i[word chunk_id]
-  end
-
-  @db.create_table?(:embeddings) do
-    primary_key :id, type: :Bignum
-    column :vector, "vector(1536)"
-    foreign_key :chunk_id, :parts
-    foreign_key :topic_id, :topics
-    index %i[vector chunk_id topic_id]
-  end
 rescue StandardError => e
   logger.fatal e.to_s
 end

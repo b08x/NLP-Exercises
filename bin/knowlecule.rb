@@ -37,6 +37,7 @@ require "utils/text/fix_encoding"
 require "db/ohm"
 require "db/postgres"
 
+#Knowlecule::Redis.flush
 Knowlecule::Redis.connect(ENV['REDIS'])
 
 # require "llm/dify"
@@ -45,6 +46,7 @@ require "llm/localai"
 require "llm/ollama"
 
 require "item"
+# require "deepgram"
 require "parser"
 require "parsers/ansible"
 require "parsers/git"

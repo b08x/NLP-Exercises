@@ -3,10 +3,9 @@
 
 require "wordnet"
 
-class WordSenses < ComposableOperations::ComposedOperation
-  processes :word
+class WordSenses
 
-  before do
+  def initialize
     @lexicon = WordNet::Lexicon.new
   end
 
@@ -30,14 +29,3 @@ class WordSenses < ComposableOperations::ComposedOperation
 end
 
 
-class Lemma < ComposableOperations::Operation
-  processes :word
-
-  before do
-    @lem = Lemmatizer.new
-  end
-
-  def execute
-    @lem.lemma(word, :noun)
-  end
-end

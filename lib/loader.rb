@@ -6,7 +6,7 @@ require "parallel"
 # require_relative "loaders/document"
 
 module Knowlecule
-  class Import
+  class Loader
     attr_accessor :files
 
     def initialize(source)
@@ -15,11 +15,11 @@ module Knowlecule
           glob = `fd -t f -a`.split("\n")
           files = Knowlecule::ArrayLib.to_indices_hash(glob)
           Parallel.map(files, progress: "     #{files.count}", in_processes: 3) do |file|
-            add(Item.metadata(file[1]))
+            ohm_add(Item.metadata(file[1]))
           end
         end
       elsif File.file?(source)
-        add(Item.metadata(source))
+        ohm_add(Item.metadata(source))
       else
         puts "neither file nor directory, exiting"
       end
@@ -27,7 +27,7 @@ module Knowlecule
 
     private
 
-    def add(file)
+    def ohm_add(file)
       logger.debug("adding #{file}")
       Item.create(
         path: file[:path],
@@ -42,3 +42,5 @@ module Knowlecule
     end
   end
 end
+
+# depending on file type ---> return a text object, audio, or video object

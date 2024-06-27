@@ -1,11 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'linguistics'
 require 'ruby-spacy'
 
 include Logging
 
 module Tagging
+  include Linguistics
   def grammars(text)
     raise NotImplementedError
   end
@@ -17,22 +19,52 @@ class SpacyFeatureExtractor
   attr_accessor :nlp, :spacy, :deps, :ners, :sentences
 
   def initialize
+    Linguistics.use(:en)
     @nlp = Spacy::Language.new('en_core_web_trf')
   end
 
-  def sentences_to_json(paragraphs)
-      doc = @nlp.read(paragraphs)
-
-      @sentences = doc.sents.map do |sentence|
-        {
-          text: sentence.text,
-          pos_tags: sentence.tokens.map { |t| "#{t.text} (#{t.pos_})" }.join(', '),
-          label: sentence.ents.map { |e| "#{e.text} (#{e.label_})" }.join(', '),
-          simplified_structure: extract_simplified_structure(sentence)
-        }
-      end
-      return @sentences.to_json
+  def sentences_to_json(paragraph)
+    doc = @nlp.read(paragraph)
+  
+    @sentences = doc.sents.map do |sentence|
+      {
+        text: sentence.text,
+        pos_tags: sentence.tokens.map { |t| { t.text => { pos: t.pos_, tag: t.tag_, dep: t.dep_ } } }.reduce({}, :merge),
+        ners: sentence.ents.map { |e| "#{e.text} (#{e.label_})" }.join(', '),
+        nouns_and_adjectives: extract_nouns_and_adjectives(sentence),
+        subject: extract_subject(sentence.text)
+      }
+    end
+    return @sentences.to_json
   end
+  
+  def extract_nouns_and_adjectives(sentence) # Modify method to take a sentence object
+    sentence.tokens.select { |t| t.pos_ == "NOUN" || t.pos_ == "ADJ" }.map(&:text)
+  end
+  
+  def extract_subject(sentence_text)
+    begin
+      sentence = sentence_text.en.sentence
+      sentence.subject.to_s      
+    rescue LinkParser::Error => e
+      logger.warn "#{e.message}"
+     
+    end   
+  end
+
+  # def extract_nouns_and_adjectives(json_output)
+  #   parsed_json = JSON.parse(json_output)
+    
+  #   parsed_json.map do |sentence|
+  #     {
+  #       text: sentence["text"],
+  #       nouns_and_adjectives: sentence["pos_tags"].select { |word, attributes| 
+  #         attributes["pos"] == "NOUN" || attributes["pos"] == "ADJ" 
+  #       }.keys
+  #     }
+  #   end
+  # end
+  
 
   private
 

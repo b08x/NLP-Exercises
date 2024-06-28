@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require_relative 'deepgram/deepgram'
 require_relative 'pipeline/segmentation'
 require_relative 'pipeline/tokenization'
 require_relative 'pipeline/tagging'
@@ -9,10 +8,9 @@ require_relative 'pipeline/grammars'
 require_relative 'pipeline/hypernyms'
 
 #
-# longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_deepgram.json')
+
 #
-# @text = Deepgram.new(longtext.path)
-# @text.parse_json
+
 #
 # @extractor = SpacyFeatureExtractor.new
 #

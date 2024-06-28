@@ -5,25 +5,126 @@ require 'mimemagic'
 require 'ohm'
 require 'ohm/contrib'
 
-module Knowlecule
-  module Redis
-    module_function
+# module Knowlecule
+#   module Redis
+#     module_function
+#
+#     def connect(host)
+#       Ohm.redis = Redic.new(host)
+#       puts 'connected to redis host!'
+#     rescue Ohm::Error => e
+#       puts "Unable to connect to Redis Cache #{e}"
+#       exit
+#     end
+#
+#     def flush
+#       Ohm.redis.call 'FLUSHDB'
+#       puts "Redis Cache Flushed! host: #{ENV.fetch('REDIS')}"
+#     end
+#   end
+# end
 
-    def connect(host)
-      Ohm.redis = Redic.new(host)
-      puts 'connected to redis host!'
-    rescue Ohm::Error => e
-      puts "Unable to connect to Redis Cache #{e}"
-      exit
+Ohm.redis = Redic.new("redis://127.0.0.1:6379")
+
+class Item < Ohm::Model
+  include Logging
+
+  extend Dry::Monads[:maybe]
+
+  include Ohm::Callbacks
+
+  attribute :path
+  attribute :name
+  attribute :extension
+  attribute :type
+  attribute :ctime
+  attribute :mtime
+
+  unique :path
+
+  index :path
+  index :name
+  index :extension
+  index :type
+
+  attr_reader :path, :extension, :name, :type, :ctime, :mtime, :media_type
+
+
+  def initialize(source)
+    @path = Pathname.new(source).cleanpath.to_s
+    @extension = File.extname(source)
+    @name = File.basename(source, ".").gsub(@extension, "")
+    @type = mime
+    @ctime = File.stat(source).ctime
+    @mtime = File.stat(source).mtime
+    @media_type = determine_media_type
+    add
+  end
+
+  private
+
+  def add
+    begin
+      unless Item.find(path: @path).nil?
+        if Item.find(path: @path).exists?
+          logger.info "#{@path} already exists, skipping import"
+        end
+      end
+    rescue ArgumentError => e
+      logger.info "#{e.message}"
     end
 
-    def flush
-      Ohm.redis.call 'FLUSHDB'
-      puts "Redis Cache Flushed! host: #{ENV.fetch('REDIS')}"
-      exit
+    begin
+      Item.create(
+        path: @path,
+        name: @name,
+        extension: @extension,
+        type: @type,
+        ctime: @ctime,
+        mtime: @mtime
+      )
+    rescue StandardError => e
+      logger.warn "#{e.message}"
+    end
+  end
+  # The safe navigation operator (&.) is a way to call methods
+  # on objects that may be nil without raising a NoMethodError exception.
+  # https://www.rubydoc.attrib/gems/rubocop/0.43.0/RuboCop/Cop/Style/SafeNavigation
+  def mime
+    mime = MimeMagic.by_magic(File.open(@path))
+    mime&.type # unless mime.nil?
+  rescue NoMethodError
+    MimeMagic.by_path(File.open(@path)).type
+  end
+
+  def determine_media_type
+    if @type.nil?
+      case @extension
+      when /md|txt|pdf|html|json|jsonl/
+        :textual
+      when /wav|mp3|ogg|flac|opus/
+        :audio
+      when /mkv|mp4/
+        :video
+      else
+        :other
+      end
+    else
+      case @type
+      when /text|pdf/
+        :textual
+      when /audio/
+        :audio
+      when /video/
+        :video
+      else
+        :other
+      end
     end
   end
 end
+
+
 
 class Subject < Ohm::Model
   attribute :name

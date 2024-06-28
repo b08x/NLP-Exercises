@@ -37,15 +37,16 @@ require "utils/text/fix_encoding"
 require "db/ohm"
 require "db/postgres"
 
-#Knowlecule::Redis.flush
-Knowlecule::Redis.connect(ENV['REDIS'])
+
+# Knowlecule::Redis.connect(ENV['REDIS'])
+# Knowlecule::Redis.flush
 
 # require "llm/dify"
 # require "llm/huggingface"
 require "llm/localai"
 require "llm/ollama"
 
-require "item"
+# require "item"
 # require "deepgram"
 require "parser"
 require "parsers/ansible"
@@ -55,18 +56,49 @@ require "parsers/pdf"
 require "parsers/ruby"
 require "parsers/srt"
 require "parsers/jsonl"
-require "pipeline"
+require "pipelinev2"
 
 require "loader"
 
 # require "menu"
-require "cli"
+# require "cli"
+
 
 if ARGV.any?
-  Drydock.run!(ARGV, $stdin) if Drydock.run? && !Drydock.has_run?
+  # Drydock.run!(ARGV, $stdin) if Drydock.run? && !Drydock.has_run?
+  action = ARGV.shift
+
+  case action
+  when "import"
+    sources = ARGV.map {|source| Pathname.new(source)}
+
+    files = []
+    sources.each do |source|
+      unless source.realdirpath.exist?
+        puts "#{source} not valid...exiting"; exit
+      end
+      if source.realdirpath.directory?
+        files += Knowlecule::Util::Glob.documents(source.realdirpath)
+      elsif source.realdirpath.file?
+        files << source.realdirpath
+      else
+        puts "neither file nor directory, exiting"
+      end
+    end
+
+  total_files = files.count
+
+  files.each do |file|
+    Item.new(file)
+  end
+  # @files = files.map { |file| Item.new(file) }
+  else
+    puts "refactor"
+  end
 end
 
-p @files
+
+p Item.all.count
 
 #
 # unless ARGV[0].nil?

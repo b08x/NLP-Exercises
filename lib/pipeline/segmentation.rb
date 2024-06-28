@@ -4,13 +4,7 @@
 require 'lingua'
 require 'pragmatic_segmenter'
 
-class Segmentation
-  def execute
-    raise NotImplementedError, "#{self.class} has not implemented the execute method"
-  end
-end
-
-class Segmenter < Segmentation
+class TextSegmenter
   DEFAULT_OPTIONS = { language: 'en', doc_type: 'none', clean: false }
 
   attr_accessor :text, :options
@@ -25,7 +19,6 @@ class Segmenter < Segmentation
     ps.segment
   end
 end
-
 #
 #
 # module Segmentation

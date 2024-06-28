@@ -121,8 +121,8 @@ gem 'langchainrb'
 gem 'lemmatizer'
 gem 'lingua'
 gem 'loofah'
-# gem 'llm_memory'
 gem 'mimemagic'
+gem 'nano-bots'
 gem 'networkx'
 gem 'nokogiri'
 gem 'ohm'
@@ -133,7 +133,6 @@ gem 'openssl'
 gem 'open-uri'
 gem 'optimist'
 gem 'osc-ruby'
-# gem 'pdf_paradise'
 gem 'pdf-reader'
 gem 'pgvector'
 gem 'poppler'
@@ -169,9 +168,16 @@ gem 'zip'
 
 gem 'algorithms'
 gem 'java'
+gem 'jbuilder', '~> 2.12'
 gem 'linguistics'
 gem 'linkparser'
 gem 'pdf-textstream'
+gem 'summarize', '~> 1.0'
+
+
+# gem 'aoororachain'
+# gem 'llm_memory'
+
 
 # TODO:
 # source "https://rubygems.pkg.github.com/b08x" do
@@ -182,9 +188,10 @@ gem 'pdf-textstream'
 # end
 
 # gem "betty", git: "https://github.com/b08x/betty.git", branch: "main"
-# gem 'aoororachain'
+
 # gem 'google-cloud'
 # gem 'google_palm_api', '>= 0.1.3'
+
 # gem 'red-arrow', '11.0.0'
 # gem 'red-arrow-numo-narray'
 # gem 'red-chainer'
@@ -196,8 +203,6 @@ gem 'pdf-textstream'
 # gem 'red-parquet', '11.0.0'
 # gem 'red-plasma'
 # gem 'red_amber', '0.4.2'
-# gem 'summarize'
 
-gem 'jbuilder', '~> 2.12'
 
-gem 'summarize', '~> 1.0'
+

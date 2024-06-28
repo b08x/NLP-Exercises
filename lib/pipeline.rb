@@ -8,27 +8,34 @@ require_relative 'pipeline/modeler'
 require_relative 'pipeline/grammars'
 require_relative 'pipeline/hypernyms'
 
+#
+# longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_deepgram.json')
+#
+# @text = Deepgram.new(longtext.path)
+# @text.parse_json
+#
+# @extractor = SpacyFeatureExtractor.new
+#
+#
+# # just the transcript does not include speaker notation
+# # Segmenter.new(@text.transcript, doc_type: 'pdf', clean: true).execute
+# # deepgram paragraphs include diarized text (speaker 0: blah blah, speaker 1: blah, etc)
+# segments = Segmenter.new(@text.paragraphs.join(" "), doc_type: 'pdf', clean: true).execute
+#
+#
+# @taggedtext = []
+# segments.each do |seg|
+#   tagged = @extractor.sentences(seg)
+#   @taggedtext << JSON.parse(tagged)
+# end
+#
+# puts @taggedtext
+#
+# puts "------\n"
 
-longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_deepgram.json')
 
-@text = Deepgram.new(longtext.path)
-@text.parse_json
 
-@extractor = SpacyFeatureExtractor.new
-@tt = []
-
-# deepgram paragraphs include diarized text (speaker 0: blah blah, speaker 1: blah, etc)
-segments = Segmenter.new(@text.paragraphs.join(" "), doc_type: 'pdf', clean: true).execute
-
-segments.each do |seg|
-  puts @extractor.sentences_to_json(seg)
-end
-
-# just the transcript does not include speaker notation
-# Segmenter.new(@text.transcript, doc_type: 'pdf', clean: true).execute
-
-puts "------\n"
-
+#--------------------------------------------------------
 # @text.paragraphs.each do |para|
 #   @tt << Tokenizer.tokenize(para)
 #   # p tt.join(" ").strip.chomp

@@ -4,23 +4,6 @@
 require 'lingua'
 require 'pragmatic_segmenter'
 
-#
-#
-# module Segmentation
-#   def segment(text)
-#     raise NotImplementedError
-#   end
-# end
-#
-# class Segmenter
-#   include Segmentation
-#
-#   def self.segment(text)
-#     content = Lingua::EN::Readability.new(text)
-#     content
-#   end
-# end
-
 class Segmentation
   def execute
     raise NotImplementedError, "#{self.class} has not implemented the execute method"
@@ -42,3 +25,20 @@ class Segmenter < Segmentation
     ps.segment
   end
 end
+
+#
+#
+# module Segmentation
+#   def segment(text)
+#     raise NotImplementedError
+#   end
+# end
+#
+# class Segmenter
+#   include Segmentation
+#
+#   def self.segment(text)
+#     content = Lingua::EN::Readability.new(text)
+#     content
+#   end
+# end

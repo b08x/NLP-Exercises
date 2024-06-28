@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 module Knowlecule
-  module Util
     module Glob
       module_function
 
@@ -57,5 +56,4 @@ module Knowlecule
         Dir.glob(File.join(path, "**{,/*/**}/*.{pdf,md,markdown,txt,json,html}"))
       end
     end
-  end
 end

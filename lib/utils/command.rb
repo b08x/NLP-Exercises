@@ -6,31 +6,29 @@ require 'open4'
 require 'json'
 
 module Knowlecule
-  module Util
-    module Command
-      module_function
+  module Command
+    module_function
 
-      def run(command = [])
-        pid, stdin, stdout, stderr = Open4.popen4(command)
-        stdout_data = stdout.gets
-        stdout.close
-        stderr_data = stderr.gets
-        stderr.close
-        exit_code = $?.exitstatus unless $?.nil?
+    def run(command = [])
+      pid, stdin, stdout, stderr = Open4.popen4(command)
+      stdout_data = stdout.gets
+      stdout.close
+      stderr_data = stderr.gets
+      stderr.close
+      exit_code = $?.exitstatus unless $?.nil?
 
-        [stdout_data, stderr_data, exit_code]
-      end
+      [stdout_data, stderr_data, exit_code]
+    end
 
-      def run_system(command)
-        _, stdout, stderr, wait_thr = Open3.popen3(command)
-        stdout_data = stdout.gets(nil)
-        stdout.close
-        stderr_data = stderr.gets(nil)
-        stderr.close
-        exit_code = wait_thr.value
+    def run_system(command)
+      _, stdout, stderr, wait_thr = Open3.popen3(command)
+      stdout_data = stdout.gets(nil)
+      stdout.close
+      stderr_data = stderr.gets(nil)
+      stderr.close
+      exit_code = wait_thr.value
 
-        [stdout_data, stderr_data, exit_code]
-      end
+      [stdout_data, stderr_data, exit_code]
     end
   end
 end
@@ -75,10 +73,10 @@ def notebook(path)
   # logger.debug("documents loaded")
   begin
     parsed_documents = JSON.parse(stdout_data)
-    return { status: 'success', message: 'Documents loaded successfully', data: parsed_documents }
+    { status: 'success', message: 'Documents loaded successfully', data: parsed_documents }
   rescue JSON::ParserError => e
     puts "Failed to parse documents: #{e.message}"
-    return { status: 'error', message: "Failed to parse documents: #{e.message}", data: nil }
+    { status: 'error', message: "Failed to parse documents: #{e.message}", data: nil }
   end
 end
 

@@ -23,108 +23,72 @@ class SpacyFeatureExtractor
     @nlp = Spacy::Language.new('en_core_web_trf')
   end
 
-  def sentences_to_json(paragraph)
+  def sentences(paragraph)
     doc = @nlp.read(paragraph)
-  
+
     @sentences = doc.sents.map do |sentence|
       {
         text: sentence.text,
-        pos_tags: sentence.tokens.map { |t| { t.text => { pos: t.pos_, tag: t.tag_, dep: t.dep_ } } }.reduce({}, :merge),
+        parts_of_speech: sentence.tokens.map do |t|
+                          { t.text => { pos: t.pos_, tag: t.tag_, dep: t.dep_ } }
+                        end.reduce({}, :merge),
         ners: sentence.ents.map { |e| "#{e.text} (#{e.label_})" }.join(', '),
-        nouns_and_adjectives: extract_nouns_and_adjectives(sentence),
-        subject: extract_subject(sentence.text)
+        subjects: extract_subjects(sentence.text),
+        main_verb: extract_main_verb(sentence),
+        noun_phrases: extract_noun_phrases(sentence),
+        nouns: extract_nouns(sentence),
+        adjectives: extract_adjectives(sentence),
+        verbs: extract_verbs(sentence),
+        adverbs: extract_adverbs(sentence)
+
       }
     end
-    return @sentences.to_json
+    @sentences.to_json
   end
-  
-  def extract_nouns_and_adjectives(sentence) # Modify method to take a sentence object
-    sentence.tokens.select { |t| t.pos_ == "NOUN" || t.pos_ == "ADJ" }.map(&:text)
-  end
-  
-  def extract_subject(sentence_text)
-    begin
-      sentence = sentence_text.en.sentence
-      sentence.subject.to_s      
-    rescue LinkParser::Error => e
-      logger.warn "#{e.message}"
-     
-    end   
-  end
-
-  # def extract_nouns_and_adjectives(json_output)
-  #   parsed_json = JSON.parse(json_output)
-    
-  #   parsed_json.map do |sentence|
-  #     {
-  #       text: sentence["text"],
-  #       nouns_and_adjectives: sentence["pos_tags"].select { |word, attributes| 
-  #         attributes["pos"] == "NOUN" || attributes["pos"] == "ADJ" 
-  #       }.keys
-  #     }
-  #   end
-  # end
-  
 
   private
 
-  def extract_simplified_structure(sentence)
-    subject = sentence.tokens.find { |t| t.dep_ == 'nsubj' }&.text
-    verb = sentence.tokens.find { |t| t.pos_ == 'VERB' }&.text
-    object = sentence.tokens.find { |t| t.dep_ in ['dobj', 'pobj'] }&.text
-
-    [subject, verb, object].compact.join(' - ')
+  def extract_nouns(sentence) # Modify method to take a sentence object
+    sentence.tokens.select { |t| t.pos_ == 'NOUN' }.map(&:text)
   end
 
-  def subj_verb_agree(ahash)
-    adjustments = []
+  def extract_adjectives(sentence) # Modify method to take a sentence object
+    sentence.tokens.select { |t| t.pos_ == 'ADJ' }.map(&:text)
+  end
 
-    @tagged_text.each do |token, attributes|
-      doc = $nlp.read(token)
+  def extract_verbs(sentence) # Modify method to take a sentence object
+    sentence.tokens.select { |t| t.pos_ == 'VERB' }.map(&:text)
+  end
 
-      # Check for subject-verb agreement issues
-      if attributes[:pos] == :VERB && attributes[:dep] == :nsubj && doc.head.tag != 'NNS'
-        adjustments << 'Subject-verb agreement issue: singular subject with plural verb'
-      end
+  def extract_adverbs(sentence) # Modify method to take a sentence object
+    sentence.tokens.select { |t| t.pos_ == 'ADV' }.map(&:text)
+  end
 
-      # Check for pronoun-antecedent agreement issues
-      if attributes[:pos] == :PRON && attributes[:dep] == :nsubj && doc.head.tag != attributes[:tag]
-        adjustments << 'Pronoun-antecedent agreement issue: pronoun does not match antecedent in number'
-      end
+  def extract_subjects(text)
+    sentence = text.en.sentence
+    sentence.subject.to_s
+  rescue LinkParser::Error => e
+    logger.warn "#{e.message}"
+    puts "#{e.message}\n"
+  end
 
-      # Check for tense consistency issues
-      if attributes[:pos] == :VERB && attributes[:tag].start_with?('VBD') && doc.tokens.any? do |t|
-           t.pos == :VERB && t.tag.start_with?('VBZ')
-         end
-        adjustments << 'Tense consistency issue: mixed past and present tense verbs'
-      end
-
-      # Check for preposition usage issues
-      if attributes[:pos] == :ADP && attributes[:dep] == :prep && attributes[:text].downcase == 'to'
-        adjustments << "Preposition usage issue: unnecessary 'to' before infinitive verb"
-      end
-
-      next if attributes[:text].nil?
-
-      # Check for article usage issues
-      if attributes[:pos] == :DET && attributes[:text].downcase == 'a' && attributes[:dep] == :det && doc.head.tag.start_with?('NNP')
-        adjustments << 'Article usage issue: unnecessary article before proper noun'
+  def extract_noun_phrases(sentence)
+    noun_phrases = []
+    sentence.tokens.each do |token|
+      # Check if the token is a head noun (e.g., has a dependency relation like 'nsubj' or 'dobj')
+      if token.dep_ == 'nsubj' || token.dep_ == 'dobj'
+        # Find all dependents of the head noun
+        dependents = sentence.tokens.select { |t| t.head == token }
+        # Combine the head noun and its dependents into a noun phrase
+        noun_phrase = [token.text] + dependents.map(&:text)
+        noun_phrases << noun_phrase.join(' ')
       end
     end
-
-    @tagged_text[:grammar_adjustments] = adjustments.join(', ')
-    @tagged_text
+    noun_phrases
   end
-  # class Lemma
-
-  #   before do
-  #     @lem = Lemmatizer.new
-  #   end
-
-  #   def execute
-  #     @lem.lemma(word, :noun)
-  #   end
-  # end
-
+  
+  def extract_main_verb(sentence)
+    sentence.tokens.select { |t| t.dep_ == 'ROOT' }.map(&:text).first
+  end
 
 end

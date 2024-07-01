@@ -1,112 +1,131 @@
 #!/usr/bin/env ruby
 
+require 'linguistics'
+require 'ruby-spacy'
+require_relative 'deepgram/deepgram'
 require_relative 'pipeline/segmentation'
-require_relative 'pipeline/tokenization'
-require_relative 'pipeline/tagging'
-require_relative 'pipeline/modeler'
-require_relative 'pipeline/grammars'
-require_relative 'pipeline/hypernyms'
+require_relative 'pipeline/topic_modeler'
 
-#
+Linguistics.use(:en)
 
-#
+class TextProcessor
+  def initialize(num_topics = 5, segmenter_options = {}, topic_modeler_options = {})
+    @segmenter_options = segmenter_options
+    @nlp = Spacy::Language.new('en_core_web_trf')
+    @topic_modeler = TopicModeler.new(20, **topic_modeler_options)
+  end
 
-#
-# @extractor = SpacyFeatureExtractor.new
-#
-#
-# # just the transcript does not include speaker notation
-# # Segmenter.new(@text.transcript, doc_type: 'pdf', clean: true).execute
-# # deepgram paragraphs include diarized text (speaker 0: blah blah, speaker 1: blah, etc)
-# segments = Segmenter.new(@text.paragraphs.join(" "), doc_type: 'pdf', clean: true).execute
-#
-#
-# @taggedtext = []
-# segments.each do |seg|
-#   tagged = @extractor.sentences(seg)
-#   @taggedtext << JSON.parse(tagged)
-# end
-#
-# puts @taggedtext
-#
-# puts "------\n"
+  def process(text)
+    sentences = segment_text(text)
+    processed_sentences = sentences.map { |sentence| process_sentence(sentence) }
+    clean_text = processed_sentences.join(' ')
+    @topic_modeler.add_document(clean_text)
+  end
 
+  def train_topic_model(iterations = 100)
+    @topic_modeler.train(iterations)
+  end
 
+  def get_topics(top_n = 10)
+    @topic_modeler.get_topics(top_n)
+  end
 
-#--------------------------------------------------------
-# @text.paragraphs.each do |para|
-#   @tt << Tokenizer.tokenize(para)
-#   # p tt.join(" ").strip.chomp
-#   #puts @extractor.sentences_to_json(para)
-# end
+  def save_topic_model
+    @topic_modeler.save
+  end
 
-# @tt.each do |t|
-#   p t.join(" ")
-# end
+  def load_topic_model
+    @topic_modeler.load
+  end
 
+  private
 
-# puts @nerds
-# puts "------\n"
+  def segment_text(text)
+    segmenter = TextSegmenter.new(text, @segmenter_options)
+    segmenter.execute
+  end
 
-# puts @extractor.deps
-#
-# module Text
-#   include Logging
-#
-#   module_function
-#
-#   def sanatize(text)
-#     clean_text = text.gsub(/\r/,' ').gsub(/\n/,' ').gsub(/\s+/,' ')
-#     clean_text.gsub!("\t\r ", '')
-#     clean_text.gsub!('-­‐', '-')
-#     clean_text.gsub!("•", '')
-#     clean_text.gsub!("●", '')
-#     clean_text.gsub!("\n\n", '#keep#')
-#     clean_text.gsub!("\n", ' ')
-#     # Fix for an incompatible space character.
-#     clean_text.gsub!(" ", ' ')
-#     clean_text.gsub!('#keep#', "\n\n")
-#     clean_text.gsub!("   ",' ')
-#     return clean_text
-#   end
-#
-# end
+  def process_sentence(sentence)
+    doc = @nlp.read(sentence)
 
+    # Extract all relevant information from the sentence
+    relevant_tokens = doc.select do |token|
+      # Include all parts of speech, tags, deps, and named entities
+      token.pos_ != '' || token.tag_ != '' || token.dep_ != '' || token.ent_type_ != ''
+    end
 
-#content = Lingua::EN::Readability.new(text)
+    logger.debug relevant_tokens
 
-#content.paragraphs.each {|x| p x; puts "\n\n"}
+    begin
+      en_sentence = sentence.en.sentence
+      subject = safe_extract { en_sentence.subject.to_s }
+      verb = safe_extract { en_sentence.verb.to_s }
+      object = safe_extract { en_sentence.object.to_s }
+      logger.debug en_sentence
+      logger.debug subject
+      logger.debug verb
+      logger.debug object
 
-# p content
-#p content.paragraphs
-#p content.sentences
-# p content.words
-# p content.unique_words
-# p content.report
+      # Use Linguistics gem for verb infinitive
+      infinitive = safe_extract { verb.en.infinitive } if verb
+      logger.debug infinitive
 
-# content.sentences.each do |sentence|
-#   begin
-#     s = sentence.gsub(/^\\|"|^\s/,"").chomp.strip.dup
-#     p Knowlecule::Pipeline::Chunker.perform(s)
+      # Use Linguistics gem for word definition (not specific to object)
+      definition = safe_extract { object.en.definition } if object
 
-#   rescue FrozenError => e
-#     p e
-#   end
-# end
+      processed_tokens = relevant_tokens.map do |token|
+        {
+          text: token.text,
+          pos: token.pos_,
+          tag: token.tag_,
+          dep: token.dep_,
+          ent_type: token.ent_type_
+        }
+      end + [subject, verb, object, infinitive].compact
+
+      logger.debug processed_tokens
+
+      # Filter for nouns, proper nouns, named entities, and adjectives
+      filtered_tokens = processed_tokens.select do |token|
+        token.is_a?(Hash) &&
+        (["NN", "JJ", "RB"].include? token[:tag])
+      end.map { |token| token[:text] }
+
+      # filtered_tokens = processed_tokens.select { |token| token.is_a?(Hash) }
+      #                                   .map { |token| token[:text] }
 
 
-#
-#
-# exit
+      processed_text = filtered_tokens.map { |token| token}.join(' ')
 
-# modeler = Modeler.new(Dir.pwd)
-#
-# @tt.each do |tokens|
-#   modeler.add(tokens)
-# end
-# modeler.train
-# modeler.summary
-#
-# puts modeler.model.topic_words
-#
-#
+      processed_text += " | #{definition}" if definition
+
+      logger.debug processed_text
+
+      processed_text
+    rescue LinkParser::Error => e
+      logger.error e.message
+    ensure
+    end
+  end
+
+  def safe_extract
+    yield
+  rescue StandardError => e
+    logger.warn "Warning: #{e.message}"
+    nil
+  end
+end
+
+
+# EXAMPLE USAGE
+
+# longtext = Item.new('/home/b08x/Recordings/staging/test0001/2024-05-22_23-13-31_deepgram.json')
+# @text = Deepgram.new(longtext.path)
+# @text.parse_json
+
+# processor = TextProcessor.new(10, { clean: true }, { term_weight: :one })
+# processor.process(@text.paragraphs.join(' '))
+
+# processor.train_topic_model
+
+# processor.save_topic_model

@@ -59,10 +59,10 @@ def notebook(path)
       "#{path}"
     ).load_data()
 
-    print(documents)
+    print(documents[0])
   PYTHON
 
-  stdout_data, stderr_data, exit_code = Knowlecule::Util::Command.run_system(command)
+  stdout_data, stderr_data, exit_code = Knowlecule::Command.run_system(command)
 
   if exit_code != 0
     # logger.warn("Failed to load documents: #{stderr_data}")
@@ -72,7 +72,7 @@ def notebook(path)
 
   # logger.debug("documents loaded")
   begin
-    parsed_documents = JSON.parse(stdout_data)
+    parsed_documents = JSON.parse(stdout_data.to_json)
     { status: 'success', message: 'Documents loaded successfully', data: parsed_documents }
   rescue JSON::ParserError => e
     puts "Failed to parse documents: #{e.message}"
@@ -84,4 +84,8 @@ end
 
 # notes = notebook(path)
 
-# p notes
+# notes[:data].each do |note|
+#   p note
+#   exit
+# end
+

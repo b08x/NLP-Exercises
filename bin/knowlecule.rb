@@ -4,101 +4,95 @@
 lib_dir = File.expand_path(File.join(__dir__, '..', 'lib'))
 $LOAD_PATH.unshift lib_dir unless $LOAD_PATH.include?(lib_dir)
 
-require "tty-cursor"
+require 'tty-cursor'
 
-require "composable_operations"
-require "net/http"
-require "dry/monads"
+require 'composable_operations'
+require 'net/http'
+require 'dry/monads'
 
 require 'pathname'
-require "faraday"
-require "hashie"
-require "json"
-require "jsonl"
-require "langchainrb"
+require 'faraday'
+require 'hashie'
+require 'json'
+require 'jsonl'
+require 'langchainrb'
 
-require "dotenv"
-Dotenv.load(File.join(__dir__, "..", "docker", ".env"))
+require 'dotenv'
+Dotenv.load(File.join(__dir__, '..', 'docker', '.env'))
 
-require "utils/logging"
-require "version"
-require "config"
+require 'utils/logging'
+require 'version'
+require 'config'
 
-require "ui"
+require 'ui'
 
-require "utils/arraylib"
-require "utils/command"
-require "utils/glob"
-require "utils/linked-list"
-require "utils/text/fix_encoding"
+require 'utils/arraylib'
+require 'utils/command'
+require 'utils/glob'
+require 'utils/linked-list'
+require 'utils/text/fix_encoding'
 # require "utils/text/acronym_finder"
 # require "utils/text/normalize_pathnames"
 
-require "db/ohm"
-require "db/postgres"
-
+require 'db/ohm'
+require 'db/postgres'
 
 # Knowlecule::Redis.connect(ENV['REDIS'])
 # Knowlecule::Redis.flush
 
 # require "llm/dify"
 # require "llm/huggingface"
-require "llm/localai"
-require "llm/ollama"
+require 'llm/localai'
+require 'llm/ollama'
 
 # require "item"
 # require "deepgram"
-require "parser"
-require "parsers/ansible"
-require "parsers/git"
-require "parsers/md"
-require "parsers/pdf"
-require "parsers/ruby"
-require "parsers/srt"
-require "parsers/jsonl"
-require "pipelinev2"
+require 'parser'
+require 'parsers/ansible'
+require 'parsers/git'
+require 'parsers/md'
+require 'parsers/pdf'
+require 'parsers/ruby'
+require 'parsers/srt'
+require 'parsers/jsonl'
 
-require "loader"
-
-# require "menu"
-# require "cli"
-
+require 'pipeline'
 
 if ARGV.any?
   # Drydock.run!(ARGV, $stdin) if Drydock.run? && !Drydock.has_run?
   action = ARGV.shift
 
   case action
-  when "import"
-    sources = ARGV.map {|source| Pathname.new(source)}
+  when 'import'
+    sources = ARGV.map { |source| Pathname.new(source) }
 
     files = []
     sources.each do |source|
       unless source.realdirpath.exist?
-        puts "#{source} not valid...exiting"; exit
+        puts "#{source} not valid...exiting"
+        exit
       end
       if source.realdirpath.directory?
         files += Knowlecule::Util::Glob.documents(source.realdirpath)
       elsif source.realdirpath.file?
         files << source.realdirpath
       else
-        puts "neither file nor directory, exiting"
+        puts 'neither file nor directory, exiting'
       end
     end
 
-  total_files = files.count
+    total_files = files.count
 
-  files.each do |file|
-    Item.new(file)
-  end
+    files.each do |file|
+      Item.new(file)
+    end
   # @files = files.map { |file| Item.new(file) }
+  when 'ollama'
+    OllamaClient.run
   else
-    puts "refactor"
+    puts 'refactor'
   end
 end
-
-
-p Item.all.count
 
 #
 # unless ARGV[0].nil?

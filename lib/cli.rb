@@ -68,6 +68,7 @@ module Knowlecule
       end
 
       @files = files.map { |file| Item.new(file) }
+      p @files
     end
 
   end # end cli class
